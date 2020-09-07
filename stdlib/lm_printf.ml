@@ -112,7 +112,8 @@ let extra_formatting file chan formatter =
       { out_string = out;
         out_flush = flush;
         out_newline = newline;
-        out_spaces = spaces
+        out_spaces = spaces;
+        out_indent = spaces;
       }
    in
       pp_set_formatter_out_functions formatter functions
@@ -195,7 +196,8 @@ let set_all_formatter_output_functions out flush newline spaces =
       { out_string = out;
         out_flush = flush;
         out_newline = newline;
-        out_spaces = spaces
+        out_spaces = spaces;
+        out_indent = spaces
       }
    in
       set_formatter_out_functions functions
@@ -205,7 +207,8 @@ let pp_set_all_formatter_output_functions buf out flush newline spaces =
       { out_string = out;
         out_flush = flush;
         out_newline = newline;
-        out_spaces = spaces
+        out_spaces = spaces;
+        out_indent = spaces
       }
    in
       pp_set_formatter_out_functions buf functions
