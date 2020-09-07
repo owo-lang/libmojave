@@ -481,11 +481,9 @@ struct
    (*
     * Outermost printf function.
     *)
-   let fprintf buf =
-      let print s =
+   let fprintf buf s =
+      let s = string_of_format s in
          print_loop buf 0 (String.length s) s
-      in
-         Obj.magic print
 end
 
 (*!
