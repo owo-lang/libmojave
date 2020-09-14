@@ -311,7 +311,7 @@ static DllHooks hooks = {
     caml_callback2_exn,
     caml_register_global_root,
     caml_modify,
-    // &caml_local_roots,
+    &Caml_state,
     caml_enter_blocking_section,
     caml_leave_blocking_section,
     caml_alloc_string,
