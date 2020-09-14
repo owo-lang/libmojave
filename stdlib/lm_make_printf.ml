@@ -483,7 +483,7 @@ struct
     *)
    let fprintf buf s =
       let s = string_of_format s in
-         print_loop buf 0 (String.length s) s
+      print_loop buf 0 (String.length s) s
 end
 
 (*!
