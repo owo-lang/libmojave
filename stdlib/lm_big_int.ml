@@ -49,7 +49,7 @@ type big_int = bool * int list
 (*
  * Maximum digit size.
  *)
-let shift_int = 15
+let shift_int = 31
 let carry_int = 1 lsl shift_int
 let max_int   = pred carry_int
 
