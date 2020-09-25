@@ -140,23 +140,26 @@ struct
    let compute_tag acc =
       let buf = Buffer.create 16 in
       let rec p_acc b a = match a with
-         Acc_string_literal (p, s) -> p_acc b a; Buffer.add_string b s
+         Acc_data_string (p, s)
+       | Acc_string_literal (p, s) -> p_acc b a; Buffer.add_string b s
+       | Acc_char_literal (p, c)
+       | Acc_data_char (p, c) -> p_acc b a; Buffer.add_char b c
        | End_of_acc -> ()
-       | _ -> raise (Invalid_argument "Invalid print box tag")
+       | _ -> raise (Invalid_argument "compute_tag: Unsupported print box tag foramt")
       in p_acc buf acc;
       let len = Buffer.length buf in
       if len < 2 then Buffer.contents buf
       else Buffer.sub buf 1 (len - 2)
 
-   let print_open_box buf indent = function
+   let rformat_open_box buf indent = function
       Pp_hbox -> Args.open_hbox buf
     | Pp_vbox -> Args.open_vbox buf indent
     | Pp_hvbox -> Args.open_hvbox buf indent
     | Pp_hovbox -> Args.open_hovbox buf indent
     | Pp_box -> Args.open_box buf indent
-    | Pp_fits -> raise (Invalid_argument "Unsupported fits type")
+    | Pp_fits -> raise (Invalid_argument "rformat_open_box: Unsupported fits type")
 
-   let print_formatting_lit o fmting_lit = match fmting_lit with
+   let format_formatting_lit o fmting_lit = match fmting_lit with
       Close_box                 -> Args.close_box o
     | Close_tag                 -> ()
     | Break ("@,", _, _)        -> Args.print_cut o
@@ -172,13 +175,13 @@ struct
 
    let rec print_acc o acc = match acc with
       Acc_formatting_lit (p, f) ->
-         print_acc o p; print_formatting_lit o f;
+         print_acc o p; format_formatting_lit o f;
     | Acc_formatting_gen (p, Acc_open_tag acc') ->
          print_acc o p; Args.print_string o "@{"; print_acc o acc'; (* not implemented *)
     | Acc_formatting_gen (p, Acc_open_box acc') ->
          print_acc o p;
          let (indent, bty) = open_box_of_string (compute_tag acc') in
-         print_open_box o indent bty;
+         rformat_open_box o indent bty;
     | Acc_string_literal (p, s)
     | Acc_data_string (p, s)   -> print_acc o p; Args.print_string o s
     | Acc_char_literal (p, c)
@@ -188,7 +191,7 @@ struct
     | Acc_invalid_arg (p, msg) -> print_acc o p; raise (Invalid_argument msg);
     | End_of_acc               -> ()
 
-   let fprintf o (Format (fmt,_)) = 
+   let fprintf o (Format (fmt, _)) =
       make_printf (fun acc -> print_acc o acc; Args.exit o) End_of_acc fmt
 end
 
