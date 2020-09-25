@@ -27,7 +27,6 @@ CFILES[] =
     lm_abstract
     lm_float
     lm_ncurses
-    lm_printf
     lm_raw
     lm_readline
     lm_rusage
