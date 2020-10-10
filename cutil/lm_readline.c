@@ -15,7 +15,7 @@
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-#if READLINE
+#ifdef READLINE
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <errno.h>
@@ -31,7 +31,7 @@
 /***  Readline Tab Completion Stubs  ***/
 
 
-#if READLINE
+#ifdef READLINE
 
 static int list_index = 0;
 static int len = 0;
@@ -110,7 +110,7 @@ static char **command_completion(char *text, int start, int end) {
    char **matches = NULL;
 
    if(start == 0) {
-      matches = RL_COMPLETION_MATCHES(text, (RL_CP_TYPE *)command_generator);
+      matches = rl_completion_matches(text, (rl_compentry_func_t *)command_generator);
    }
 
    return(matches);
@@ -129,7 +129,7 @@ value caml_initialize_readline(value unit) {
    commands = NULL;
 
    /* Tell the completer about our command completion engine */
-   rl_attempted_completion_function = (RL_CPP_TYPE *)command_completion;
+   rl_attempted_completion_function = (CPPFunction *)command_completion;
 
    /* Set horizontal scroll mode; other modes screw up display */
    rl_variable_bind("horizontal-scroll-mode", "on");
@@ -290,7 +290,7 @@ value caml_readline(value prompt_arg) {
    CAMLlocal2(v, b);
    char *line;
 
-#if READLINE
+#ifdef READLINE
 
    line = readline(String_val(prompt_arg));
 
