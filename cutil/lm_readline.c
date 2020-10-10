@@ -74,7 +74,7 @@ static char *dupstr(const char *s) {
  * then we start at the top of the list; otherwise, we use our
  * pre-existing state to resume a pending search.
  */
-static char *command_generator(char *text, int state) {
+static char *command_generator(const char *text, int state) {
 
    const char *name;
 
@@ -105,12 +105,12 @@ static char *command_generator(char *text, int state) {
  * Attempt command-name completion (assuming a list of
  * commands have been registered into the system).
  */
-static char **command_completion(char *text, int start, int end) {
+static char **command_completion(const char *text, int start, int end) {
 
    char **matches = NULL;
 
    if(start == 0) {
-      matches = rl_completion_matches(text, (rl_compentry_func_t *)command_generator);
+      matches = rl_completion_matches(text, *command_generator);
    }
 
    return(matches);
@@ -129,7 +129,7 @@ value caml_initialize_readline(value unit) {
    commands = NULL;
 
    /* Tell the completer about our command completion engine */
-   rl_attempted_completion_function = (CPPFunction *)command_completion;
+   rl_attempted_completion_function = *command_completion;
 
    /* Set horizontal scroll mode; other modes screw up display */
    rl_variable_bind("horizontal-scroll-mode", "on");
