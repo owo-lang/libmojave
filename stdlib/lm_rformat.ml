@@ -594,14 +594,14 @@ let get_hard_binder buf =
       search (get_formatting_stack buf).formatting_stack
 
 (*
- * XXX: BUG: Instead of the String.length we need to find the screen width
+ * Instead of the String.length we need to find the screen width
  * of the string s (which can be different from String.length s when UTF-8
  * or other multi-byte representations are used.
- *
- * See the man pages for mbstowcs and wcswidth for more information.
  *)
+external display_width : string -> int = "display_width_of_string"
+
 let format_raw_string buf s =
-   push_command buf (Text (String.length s, s))
+   push_command buf (Text (display_width s, s))
 
 let format_cbreak buf str str' =
    let l = String.length str in
