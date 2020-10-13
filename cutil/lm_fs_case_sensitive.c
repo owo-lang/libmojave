@@ -10,16 +10,16 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation,
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * Additional permission is given to link this library with the
  * OpenSSL project's "OpenSSL" library, and with the OCaml runtime,
  * and you may distribute the linked executables.  See the file
@@ -58,45 +58,45 @@ value lm_fs_case_sensitive_available(value _unit) {
     return Val_true;
 }
 
-/* 
+/*
  * Returns true if the volume containing the path is case-sensitive,
- * or false if it is not.  
+ * or false if it is not.
  * Raises Failure if the case-sensitivity cannot be detected.
  */
 value lm_fs_case_sensitive(value path_val) {
     CAMLparam1(path_val);
     struct statfs stat;
-    char *path = String_val(path_val);
-    
+    const char *path = String_val(path_val);
+
     do {
         caml_enter_blocking_section();
         if (statfs(path, &stat))
             break;
-        
+
         struct attrlist alist;
         memset(&alist, 0, sizeof(alist));
         alist.bitmapcount = ATTR_BIT_MAP_COUNT;
         alist.volattr = ATTR_VOL_CAPABILITIES;
         vol_caps_buf_t buffer;
-        
+
         if (getattrlist(stat.f_mntonname, &alist, &buffer, sizeof(buffer), 0))
             break;
-        
+
         caml_leave_blocking_section();
         if (!(alist.volattr & ATTR_VOL_CAPABILITIES))
             caml_failwith("Couldn't get volume capabilities");
-        
-        if (!(buffer.caps.valid[VOL_CAPABILITIES_FORMAT] 
+
+        if (!(buffer.caps.valid[VOL_CAPABILITIES_FORMAT]
                     & VOL_CAP_FMT_CASE_SENSITIVE))
             caml_failwith("VOL_CAP_FMT_CASE_SENSITIVE not valid on this volume");
-        
-        if (buffer.caps.capabilities[VOL_CAPABILITIES_FORMAT] 
+
+        if (buffer.caps.capabilities[VOL_CAPABILITIES_FORMAT]
                     & VOL_CAP_FMT_CASE_SENSITIVE) {
             CAMLreturn(Val_true);
         } else {
             CAMLreturn(Val_false);
         }
-        
+
     } while (0);
     caml_leave_blocking_section();
     caml_failwith(strerror(errno));

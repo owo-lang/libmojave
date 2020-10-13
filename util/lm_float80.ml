@@ -68,24 +68,24 @@ let min x y    = if compare x y < 0 then x else y
 let max x y    = if compare x y > 0 then x else y
 
 (* Check buffer bounds *)
-external c_blit_float32 : float80 -> string -> int -> unit = "c_blit_float32"
-external c_blit_float64 : float80 -> string -> int -> unit = "c_blit_float64"
-external c_blit_float80 : float80 -> string -> int -> unit = "c_blit_float80"
+external c_blit_float32 : float80 -> bytes -> int -> unit = "c_blit_float32"
+external c_blit_float64 : float80 -> bytes -> int -> unit = "c_blit_float64"
+external c_blit_float80 : float80 -> bytes -> int -> unit = "c_blit_float80"
 
 let blit_float32 x buf off =
-   let len = String.length buf in
+   let len = Bytes.length buf in
       if off + 4 > len then
          raise (Invalid_argument "blit_float32");
       c_blit_float32 x buf off
 
 let blit_float64 x buf off =
-   let len = String.length buf in
+   let len = Bytes.length buf in
       if off + 8 > len then
          raise (Invalid_argument "blit_float64");
       c_blit_float64 x buf off
 
 let blit_float80 x buf off =
-   let len = String.length buf in
+   let len = Bytes.length buf in
       if off + 10 > len then
          raise (Invalid_argument "blit_float80");
       c_blit_float80 x buf off

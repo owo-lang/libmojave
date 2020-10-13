@@ -46,9 +46,9 @@
 value ml_write_block(value obj, value buf, value v_start)
 {
     int start = Int_val(v_start);
-    int buf_len = string_length(buf);
+    int buf_len = caml_string_length(buf);
     int obj_len = Bosize_val(obj);
-    char *bufp = String_val(buf);
+    unsigned char *bufp = Bytes_val(buf);
 
     /*
      * Check all the bounds.

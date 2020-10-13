@@ -10,16 +10,16 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation,
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * Additional permission is given to link this library with the
  * OpenSSL project's "OpenSSL" library, and with the OCaml runtime,
  * and you may distribute the linked executables.  See the file
@@ -43,7 +43,7 @@
 #include <caml/fail.h>
 
 #ifdef WIN32
-	typedef short int16_t;
+  typedef short int16_t;
 #endif
 
 /*
@@ -53,7 +53,7 @@ value load_int8(value v_string, value v_off)
 {
     CAMLparam2(v_string, v_off);
     int off, len;
-    char *str;
+    const char *str;
 
     /* Get arguments */
     str = String_val(v_string);
@@ -72,7 +72,7 @@ value load_int16(value v_string, value v_off)
 {
     CAMLparam2(v_string, v_off);
     int off, len;
-    char *str;
+    const char *str;
 
     /* Get arguments */
     str = String_val(v_string);
@@ -92,7 +92,7 @@ value load_int32(value v_string, value v_off)
     CAMLparam2(v_string, v_off);
     CAMLlocal1(result);
     int off, len;
-    char *str;
+    const char *str;
     int32_t i;
 
     /* Get arguments */
@@ -115,7 +115,7 @@ value load_int64(value v_string, value v_off)
     CAMLparam2(v_string, v_off);
     CAMLlocal1(result);
     int off, len;
-    char *str;
+    const char *str;
     int64_t i;
 
     /* Get arguments */
@@ -138,7 +138,7 @@ value load_float(value v_string, value v_off)
     CAMLparam2(v_string, v_off);
     CAMLlocal1(result);
     int off, len;
-    char *str;
+    const char *str;
     double x;
 
     /* Get arguments */
@@ -159,15 +159,15 @@ value load_float(value v_string, value v_off)
 /*
  * Store numbers to a string.
  */
-value store_int8(value v_string, value v_off, value v_val)
+value store_int8(value v_bytes, value v_off, value v_val)
 {
-    CAMLparam3(v_string, v_off, v_val);
+    CAMLparam3(v_bytes, v_off, v_val);
     int off, len, i;
-    char *str;
+    unsigned char *str;
 
     /* Get arguments */
-    str = String_val(v_string);
-    len = string_length(v_string);
+    str = Bytes_val(v_bytes);
+    len = string_length(v_bytes);
     off = Int_val(v_off);
     i = Int_val(v_val);
 
@@ -180,15 +180,15 @@ value store_int8(value v_string, value v_off, value v_val)
     CAMLreturn(Val_unit);
 }
 
-value store_int16(value v_string, value v_off, value v_val)
+value store_int16(value v_bytes, value v_off, value v_val)
 {
-    CAMLparam3(v_string, v_off, v_val);
+    CAMLparam3(v_bytes, v_off, v_val);
     int off, len, i;
-    char *str;
+    unsigned char *str;
 
     /* Get arguments */
-    str = String_val(v_string);
-    len = string_length(v_string);
+    str = Bytes_val(v_bytes);
+    len = string_length(v_bytes);
     off = Int_val(v_off);
     i = Int_val(v_val);
 
@@ -201,17 +201,17 @@ value store_int16(value v_string, value v_off, value v_val)
     CAMLreturn(Val_unit);
 }
 
-value store_int32(value v_string, value v_off, value v_val)
+value store_int32(value v_bytes, value v_off, value v_val)
 {
-    CAMLparam3(v_string, v_off, v_val);
+    CAMLparam3(v_bytes, v_off, v_val);
     CAMLlocal1(result);
     int off, len;
-    char *str;
+    unsigned char *str;
     int32_t i;
 
     /* Get arguments */
-    str = String_val(v_string);
-    len = string_length(v_string);
+    str = Bytes_val(v_bytes);
+    len = string_length(v_bytes);
     off = Int_val(v_off);
     i = Int32_val(v_val);
 
@@ -224,17 +224,17 @@ value store_int32(value v_string, value v_off, value v_val)
     CAMLreturn(Val_unit);
 }
 
-value store_int64(value v_string, value v_off, value v_val)
+value store_int64(value v_bytes, value v_off, value v_val)
 {
-    CAMLparam3(v_string, v_off, v_val);
+    CAMLparam3(v_bytes, v_off, v_val);
     CAMLlocal1(result);
     int off, len;
-    char *str;
+    unsigned char *str;
     int64_t i;
 
     /* Get arguments */
-    str = String_val(v_string);
-    len = string_length(v_string);
+    str = Bytes_val(v_bytes);
+    len = string_length(v_bytes);
     off = Int_val(v_off);
     i = Int64_val(v_val);
 
@@ -247,17 +247,17 @@ value store_int64(value v_string, value v_off, value v_val)
     CAMLreturn(Val_unit);
 }
 
-value store_float(value v_string, value v_off, value v_val)
+value store_float(value v_bytes, value v_off, value v_val)
 {
-    CAMLparam2(v_string, v_off);
+    CAMLparam2(v_bytes, v_off);
     CAMLlocal1(result);
     int off, len;
-    char *str;
+    unsigned char *str;
     double x;
 
     /* Get arguments */
-    str = String_val(v_string);
-    len = string_length(v_string);
+    str = Bytes_val(v_bytes);
+    len = string_length(v_bytes);
     off = Int_val(v_off);
     x = Double_val(v_val);
 

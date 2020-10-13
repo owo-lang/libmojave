@@ -123,7 +123,7 @@ typedef struct _dll_hooks {
     value (*callback2_exn_hook)(value, value, value);
     void (*register_global_root_hook)(value *);
     void (*modify)(value *, value);
-    struct caml_domain_state **Caml_state;
+    caml_domain_state **Caml_state;
     void (*enter_blocking_section_hook)(void);
     void (*leave_blocking_section_hook)(void);
     value (*alloc_string_hook)(mlsize_t);

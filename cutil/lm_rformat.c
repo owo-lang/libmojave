@@ -45,7 +45,7 @@
 /*
  * Safe wcswidth.
  */
-int s_wcswidth(const wchar_t *pwcs, size_t n)
+static int s_wcswidth(const wchar_t *pwcs, size_t n)
 {
     wchar_t wc;
     int l;

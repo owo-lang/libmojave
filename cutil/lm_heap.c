@@ -12,16 +12,16 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation,
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * Additional permission is given to link this library with the
  * OpenSSL project's "OpenSSL" library, and with the OCaml runtime,
  * and you may distribute the linked executables.  See the file
@@ -50,7 +50,7 @@ static char *null = 0;
 #undef abort
 #define abort()    (*null = 0)
 
-static void search_pointer(char **pointers, char *name, unsigned bound, char *p, char *v, unsigned index)
+static void search_pointer(char **pointers, const char *name, unsigned bound, char *p, char *v, unsigned index)
 {
     unsigned i, j, k;
     char *p2;
@@ -67,7 +67,7 @@ static void search_pointer(char **pointers, char *name, unsigned bound, char *p,
     }
     p2 = pointers[i];
     if((p2 != p) && (Tag_val(p) != Infix_tag)) {
-        fprintf(stderr, "%s: illegal pointer: 0x%08lx < 0x%08lx < 0x%08lx, size = %lud, tag = %d\n", 
+        fprintf(stderr, "%s: illegal pointer: 0x%08lx < 0x%08lx < 0x%08lx, size = %lud, tag = %d\n",
                 name,
                 (unsigned long) p2, (unsigned long) p, (unsigned long) pointers[i + 1],
                 Wosize_val(p), Tag_val(p));
@@ -79,15 +79,15 @@ static void search_pointer(char **pointers, char *name, unsigned bound, char *p,
         abort();
     }
 }
-    
-static void lm_heap_check_aux1(char *name)
+
+static void lm_heap_check_aux1(const char *name)
 {
     char *start, *ptr, *end;
     char *v;
     value p, *next;
     mlsize_t size;
     unsigned i, index, found;
-	 char *pointers[1 << 16];
+    char *pointers[1 << 16];
 
     start = caml_young_start;
     ptr = caml_young_ptr;
@@ -98,7 +98,7 @@ static void lm_heap_check_aux1(char *name)
             (unsigned long) caml_young_start,
             (unsigned long) caml_young_ptr,
             (unsigned long) caml_young_limit,
-            (unsigned long) caml_young_end, 
+            (unsigned long) caml_young_end,
             ((unsigned long) caml_young_end) - (unsigned long) caml_young_ptr,
             ((unsigned long) caml_young_end) - (unsigned long) caml_young_limit,
             ((unsigned long) caml_young_end) - (unsigned long) caml_young_start);
@@ -165,7 +165,7 @@ static void lm_heap_check_aux1(char *name)
     }
 }
 
-static void lm_heap_check_aux2(char *name)
+static void lm_heap_check_aux2(const char *name)
 {
     char *start, *ptr, *end;
     char *v;
@@ -182,7 +182,7 @@ static void lm_heap_check_aux2(char *name)
             (unsigned long) caml_young_start,
             (unsigned long) caml_young_ptr,
             (unsigned long) caml_young_limit,
-            (unsigned long) caml_young_end, 
+            (unsigned long) caml_young_end,
             ((unsigned long) caml_young_end) - (unsigned long) caml_young_ptr,
             ((unsigned long) caml_young_end) - (unsigned long) caml_young_limit,
             ((unsigned long) caml_young_end) - (unsigned long) caml_young_start);

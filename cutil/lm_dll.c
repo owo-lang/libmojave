@@ -10,16 +10,16 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation,
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * Additional permission is given to link this library with the
  * OpenSSL project's "OpenSSL" library, and with the OCaml runtime,
  * and you may distribute the linked executables.  See the file
@@ -92,7 +92,8 @@ value lm_dll_strdup(value v_str)
     CAMLparam1(v_str);
     CAMLlocal1(v);
     int size, len;
-    char *s, *p;
+    const char *s;
+    char *p;
 
     s = String_val(v_str);
     len = strlen(s);
@@ -108,7 +109,8 @@ value lm_dll_pointer_of_string(value v_str)
     CAMLparam1(v_str);
     CAMLlocal1(v);
     int size, len;
-    char *s, *p;
+    const char *s;
+    char *p;
 
     s = String_val(v_str);
     len = string_length(v_str);
@@ -131,7 +133,8 @@ value lm_dll_pointer_of_string_array(value v_argv)
 {
     CAMLparam1(v_argv);
     CAMLlocal1(v);
-    char **p, *top, *s;
+    const char *s;
+    char **p, *top;
     int i, len, words, size;
 
     /* Calculate the total storage size */
@@ -154,7 +157,7 @@ value lm_dll_pointer_of_string_array(value v_argv)
     }
     p[i] = 0;
     CAMLreturn(v);
-}        
+}
 
 value lm_dll_string_array_of_pointer(value v_ptr)
 {
@@ -182,7 +185,7 @@ value lm_dll_sub_string_array_of_pointer(value v_off, value v_len, value v_ptr)
         else {
             sprintf(col, "%d", i);
             str2 = col;
-        }        
+        }
         Store_field(v_array, i, caml_copy_string(str2));
     }
     CAMLreturn(v_array);
@@ -569,14 +572,14 @@ value lm_dlopen(value v_path, value v_filename, value v_tag, value v_flags)
     CAMLlocal1(v_globals);
     char export[1024];
     DllExport *values;
-    char *tag;
+    const char *tag;
     int flags;
     void *dll;
     value v;
 
     char path[1 << 16];
     int index, argc, i, len;
-    char *s;
+    const char *s;
 
     /* Parse the flags */
     flags = RTLD_LAZY;
