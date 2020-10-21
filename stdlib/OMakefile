@@ -3,6 +3,8 @@
 #
 OMakeVersion(0.9.8)
 
+OCAMLINCLUDES += $(CAMLLIB)/zarith
+
 #
 # Threads are optional
 #

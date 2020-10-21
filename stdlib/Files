@@ -1,7 +1,6 @@
 STDLIB_FILES[] =
     lm_debug
     lm_nocompare
-    lm_big_int
     lm_num
     lm_rformat
     lm_rformat_raw

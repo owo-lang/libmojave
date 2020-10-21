@@ -74,12 +74,10 @@ val integer_num : num -> int
 val num_of_int : int -> num
 val int_of_num : num -> int
 
-val string_of_num : num -> string
-val num_of_string : string -> num
 val to_string : num -> string
 val of_string : string -> num
-val to_int32 : num -> Int32.t
-val of_int32 : Int32.t -> num
+val string_of_num : num -> string
+val num_of_string : string -> num
 
 (*
  * -*-
