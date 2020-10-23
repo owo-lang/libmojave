@@ -38,6 +38,10 @@
 
 type num
 
+val zero_num : num
+val one_num : num
+val minus_one_num : num
+
 (*
  * Operations.
  *)
@@ -45,12 +49,12 @@ val add_num : num -> num -> num
 val sub_num : num -> num -> num
 val mult_num : num -> num -> num
 val div_num : num -> num -> num
-val mod_num : num -> num -> num
-val quo_num : num -> num -> num
 val rem_num : num -> num -> num
+val quo_num : num -> num -> num
+val mod_num : num -> num -> num
 val neg_num : num -> num
 val abs_num : num -> num
-val power_num : num -> num -> num
+val power_num : num -> int -> num
 
 val succ_num : num -> num
 val pred_num : num -> num

@@ -50,55 +50,46 @@ type num = Z.t
  ************************************************************************)
 
 (*
+ * Construction.
+ *)
+let zero_num = Z.zero
+let one_num = Z.one
+let minus_one_num = Z.minus_one
+
+(*
  * Catch overflows in addition.
  *)
 let add_num = Z.add
-
 let sub_num = Z.sub
-
 let succ_num = Z.succ
-
 let pred_num = Z.pred
-
 let mult_num = Z.mul
-
 let div_num = Z.div
-
-let mod_num = Z.rem
-
+let rem_num = Z.rem
 let quo_num = div_num
-let rem_num = mod_num
+let mod_num = rem_num
 
 (*
  * Power.
  *)
 
-let power_num i j =
-   if Z.fits_int j then
-      Z.pow i (Z.to_int j)
-   else
-      raise (Invalid_argument "power_num: argument is too big")
+let power_num = Z.pow
 
 (*
  * Absolute value.
  *)
 let abs_num = Z.abs
-
 let neg_num = Z.neg
 
 (*
  * Equality.
  *)
 let eq_num = Z.equal
-
 let compare_num = Z.compare
 
 let lt_num = Z.lt
-
 let le_num = Z.leq
-
 let gt_num = Z.gt
-
 let ge_num = Z.geq
 
 let is_zero n = Z.equal Z.zero n
@@ -111,11 +102,8 @@ let is_zero n = Z.equal Z.zero n
  * Integer conversions.
  *)
 let is_integer_num = Z.fits_int
-
 let integer_num = Z.to_int
-
 let num_of_int = Z.of_int
-
 let int_of_num = integer_num
 
 (*
