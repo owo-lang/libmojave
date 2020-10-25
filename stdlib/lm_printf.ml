@@ -1,5 +1,5 @@
 (*
- * Override Pervasives IO with Format IO
+ * Override Printf from OCaml
  *
  * ----------------------------------------------------------------
  *
@@ -186,7 +186,6 @@ let printf  = printf
 let eprintf = eprintf
 let sprintf = sprintf
 let fprintf = fprintf
-let bprintf = bprintf
 
 (*
  * Formatting functions.

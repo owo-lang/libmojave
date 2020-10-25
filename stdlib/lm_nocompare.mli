@@ -1,8 +1,8 @@
 (*
- * A special "custom" value that prohibits Pervasives.compare,
+ * A special "custom" value that prohibits Stdlib.compare,
  * but allows marshalling. By temporarily adding Lm_nocompare.it as a
  * _first_ field in a * data structure that is not supposed to be
- * compared using Pervasives.compare, one can weed out all the
+ * compared using Stdlib.compare, one can weed out all the
  * inappropriate usages of Pervasives.compare, (=), (<), etc.
  *
  * ------------------------------------------------
