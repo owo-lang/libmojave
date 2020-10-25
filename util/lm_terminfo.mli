@@ -22,18 +22,22 @@
  * LICENSE.libmojave for more details.
  *)
 
+type termcap
 
 (* tgetstr id
    Lookup the terminal capability with indicated id.  This assumes the
    terminfo to lookup is given in the TERM environment variable.  This
    function returns None if the terminal capability is not defined.  *)
-val tgetstr : string -> string option
-
+val tgetstr : termcap -> string option
 
 (* Various terminfo identifier names for use with tgetstr *)
-val enter_bold_mode : string
-val exit_attribute_mode : string
-
+val enter_bold_mode : termcap
+val enter_italics_mode : termcap
+val enter_normal_quality : termcap
+val enter_subscript_mode : termcap
+val enter_superscript_mode : termcap
+val enter_underline_mode : termcap
+val exit_attribute_mode : termcap
 
 (* xterm_escape_begin ()
    Display XTerm title begin escape, if available.  *)

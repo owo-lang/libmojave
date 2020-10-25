@@ -22,11 +22,14 @@
  * LICENSE.libmojave for more details.
  *)
 
+(* Terminal Capname *)
+type termcap = Bold | Normal | Subscript | Superscript
+             | Underline | Italics | Reset
 
-(* The C function takes a string ID, and returns the escape sequence
+(* The C function takes a integer, and returns the escape sequence
    (or an empty string if the ID is not defined for this terminal).  *)
 external caml_tgetstr_enabled : unit -> bool = "caml_tgetstr_enabled"
-external caml_tgetstr : string -> string = "caml_tgetstr"
+external caml_tgetstr : termcap -> string = "caml_tgetstr"
 
 
 (* Tgetstr is enabled only if the terminal is defined *)
@@ -48,8 +51,18 @@ let tgetstr id =
 
 
 (* Various terminfo identifier names for use with tgetstr *)
-let enter_bold_mode = "bold"
-let exit_attribute_mode = "sgr0"
+let enter_bold_mode = Bold
+
+let enter_normal_quality = Normal
+
+let enter_subscript_mode = Subscript
+let enter_superscript_mode = Superscript
+
+let enter_underline_mode = Underline
+
+let enter_italics_mode = Italics
+
+let exit_attribute_mode = Reset
 
 
 (* xterm_ok ()

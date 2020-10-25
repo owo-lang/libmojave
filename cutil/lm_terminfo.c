@@ -43,6 +43,14 @@ static int load_terminfo() {
 
 }
 
+/* Converts termcap data type to capname */
+static char *capname(int i) {
+
+    char *names[] = {"bold", "snrmq", "ssubm", "ssupm", "smul", "sitm", "sgr0"};
+
+    return names[i];
+}
+
 #endif /* NCURSES support? */
 
 /*
@@ -69,7 +77,8 @@ value caml_tgetstr(value id) {
       in.  */
 #ifdef NCURSES
    if(load_terminfo() == 0) {
-      termdata = tigetstr(String_val(id));
+       char *name = capname(Int_val(id));
+       termdata = tigetstr(name);
    }
 #endif /* NCURSES */
 
