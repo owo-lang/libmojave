@@ -44,12 +44,9 @@ static int load_terminfo() {
 }
 
 /* Converts termcap data type to capname */
-static char *capname(int i) {
-
-    char *names[] = {"bold", "snrmq", "ssubm", "ssupm", "smul", "sitm", "sgr0"};
-
-    return names[i];
-}
+static char *capnames[] = {
+    "bold", "snrmq", "ssubm", "ssupm", "smul", "sitm", "sgr0"
+};
 
 #endif /* NCURSES support? */
 
@@ -77,16 +74,17 @@ value caml_tgetstr(value id) {
       in.  */
 #ifdef NCURSES
    if(load_terminfo() == 0) {
-       char *name = capname(Int_val(id));
+       char *name = capnames[Int_val(id)];
        termdata = tigetstr(name);
    }
 #endif /* NCURSES */
 
    /* Note that tigetstr will return either 0 or -1 on error. */
    if(termdata == NULL || termdata == (char *)(-1)) {
-      result = caml_copy_string("");
+      result = Val_int(0); /* None */
    } else {
-      result = caml_copy_string(termdata);
+      result = caml_alloc_small(1, 0); /* Some string */
+      Field(result, 0) = caml_copy_string(termdata);
       /* apparently we're not supposed to free termdata here */
       /* TEMP:  I cannot find specs on this! */
       //free(termdata);

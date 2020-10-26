@@ -29,7 +29,7 @@ type termcap = Bold | Normal | Subscript | Superscript
 (* The C function takes a integer, and returns the escape sequence
    (or an empty string if the ID is not defined for this terminal).  *)
 external caml_tgetstr_enabled : unit -> bool = "caml_tgetstr_enabled"
-external caml_tgetstr : termcap -> string = "caml_tgetstr"
+external caml_tgetstr : termcap -> string option = "caml_tgetstr"
 
 
 (* Tgetstr is enabled only if the terminal is defined *)
@@ -39,15 +39,9 @@ let tgetstr_enabled = caml_tgetstr_enabled ()
    Lookup the terminal capability with indicated id.  This assumes the
    terminfo to lookup is given in the TERM environment variable.  This
    function returns None if the terminal capability is not defined.  *)
-let tgetstr id =
-   if tgetstr_enabled then
-      let result = caml_tgetstr id in
-         if result = "" then
-            None
-         else
-            Some result
-   else
-      None
+let tgetstr = if tgetstr_enabled then
+                 caml_tgetstr
+              else (fun _ -> None)
 
 
 (* Various terminfo identifier names for use with tgetstr *)

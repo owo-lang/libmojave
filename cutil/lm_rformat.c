@@ -67,6 +67,7 @@ static int s_wcswidth(const wchar_t *pwcs, size_t n)
  */
 value display_width_of_string(value v_string)
 {
+    CAMLparam1(v_string);
     const char *str = String_val(v_string);
 
     wchar_t pwcs[BUFSIZE];
@@ -79,5 +80,5 @@ value display_width_of_string(value v_string)
         i += s_wcswidth(pwcs, BUFSIZE);
     }
 
-    return Val_int(i);
+    CAMLreturn(Val_int(i));
 }

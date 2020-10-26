@@ -66,15 +66,15 @@ value caml_term_size(value arg)
 
         if(ioctl(fd, TIOCGWINSZ, &ws) < 0)
             caml_failwith("lm_termsize.c: caml_term_size: not a terminal");
-    
+
         /* Return the pair of numbers */
         Field(buf, 0) = Val_int(ws.ws_row);
         Field(buf, 1) = Val_int(ws.ws_col);
     }
 #else /* TIOCGWINSZ */
-   /* Assume that the terminal is 80 by 25 */
-   Field(buf, 0) = Val_int( 25 );
-   Field(buf, 1) = Val_int( 80 );
+    /* Assume that the terminal is 80 by 25 */
+    Field(buf, 0) = Val_int( 25 );
+    Field(buf, 1) = Val_int( 80 );
 #endif /* TIOCGWINSZ */
 #endif /* WIN32 */
 
