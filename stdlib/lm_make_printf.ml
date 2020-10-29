@@ -139,11 +139,11 @@ struct
 
    let compute_tag acc =
       let buf = Buffer.create 16 in
-      let rec p_acc b a = match a with
+      let rec p_acc b = function
          Acc_data_string (p, s)
-       | Acc_string_literal (p, s) -> p_acc b a; Buffer.add_string b s
+       | Acc_string_literal (p, s) -> p_acc b p; Buffer.add_string b s
        | Acc_char_literal (p, c)
-       | Acc_data_char (p, c) -> p_acc b a; Buffer.add_char b c
+       | Acc_data_char (p, c) -> p_acc b p; Buffer.add_char b c
        | End_of_acc -> ()
        | _ -> raise (Invalid_argument "compute_tag: Unsupported print box tag foramt")
       in p_acc buf acc;
@@ -188,7 +188,7 @@ struct
     | Acc_data_char (p, c)     -> print_acc o p; Args.print_char o c
     | Acc_delay (p, f)         -> print_acc o p; ignore (f o);
     | Acc_flush p              -> print_acc o p; Args.print_flush o
-    | Acc_invalid_arg (p, msg) -> print_acc o p; raise (Invalid_argument msg);
+    | Acc_invalid_arg (p, msg) -> print_acc o p; invalid_arg msg;
     | End_of_acc               -> ()
 
    let fprintf o (Format (fmt, _)) =
