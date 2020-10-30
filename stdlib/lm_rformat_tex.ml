@@ -77,6 +77,7 @@ let tex_escape_string _linebreaks s =
           | '>' ->
                collect_escape_space i j "\\gt"
           | '^'
+          | '~'
           | '&'
           | '#'
           | '['
@@ -101,7 +102,7 @@ let tex_escape_string _linebreaks s =
             " "
          else
             match s'.[0] with
-               ' ' | '\\' | '$' | '_' | '^' | '&' | '}' | '{' -> s'
+               ' ' | '\\' | '$' | '_' | '^' | '~' | '&' | '}' | '{' -> s'
           | _ ->
                " " ^ s'
       in
