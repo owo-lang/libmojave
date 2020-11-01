@@ -56,6 +56,10 @@ val neg_num : num -> num
 val abs_num : num -> num
 val power_num : num -> int -> num
 
+val ediv_num : num -> num -> num
+val erem_num : num -> num -> num
+val gcd_num : num -> num -> num
+
 val succ_num : num -> num
 val pred_num : num -> num
 

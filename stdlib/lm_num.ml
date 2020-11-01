@@ -57,7 +57,7 @@ let one_num = Z.one
 let minus_one_num = Z.minus_one
 
 (*
- * Catch overflows in addition.
+ * Arithmetics.
  *)
 let add_num = Z.add
 let sub_num = Z.sub
@@ -70,9 +70,16 @@ let quo_num = div_num
 let mod_num = rem_num
 
 (*
+ * Euclidean division and remainder, used by Itt_omega.
+ *)
+let ediv_num = Z.ediv
+let erem_num = Z.erem
+
+let gcd_num = Z.gcd
+
+(*
  * Power.
  *)
-
 let power_num = Z.pow
 
 (*
