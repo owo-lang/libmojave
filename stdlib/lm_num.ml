@@ -70,6 +70,11 @@ let quo_num = div_num
 let mod_num = rem_num
 
 (*
+ * Rounding towards -oo (floor), used by Itt_supinf.
+ *)
+let fdiv_num = Z.fdiv
+
+(*
  * Euclidean division and remainder, used by Itt_omega.
  *)
 let ediv_num = Z.ediv
@@ -87,6 +92,7 @@ let power_num = Z.pow
  *)
 let abs_num = Z.abs
 let neg_num = Z.neg
+let sign_num a = Z.of_int (Z.sign a)
 
 (*
  * Equality.

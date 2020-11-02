@@ -54,7 +54,10 @@ val quo_num : num -> num -> num
 val mod_num : num -> num -> num
 val neg_num : num -> num
 val abs_num : num -> num
+val sign_num : num -> num
 val power_num : num -> int -> num
+
+val fdiv_num : num -> num -> num
 
 val ediv_num : num -> num -> num
 val erem_num : num -> num -> num
