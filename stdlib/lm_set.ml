@@ -33,16 +33,16 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation,
  * version 2.1 of the License.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
+ *
  * Additional permission is given to link this library with the
  * OpenSSL project's "OpenSSL" library, and with the OCaml runtime,
  * and you may distribute the linked executables.  See the file
@@ -1023,6 +1023,47 @@ struct
             of_sorted_array 0 max_depth elements 0 length
 
    (*
+    * Following treeify function are taken from Appel's Efficient Verified Red-Black Trees
+    *)
+   let rec treeify_f n l =
+      if n = 1 then
+         match l with
+            x :: l -> Red (x, Leaf, Leaf, 1), l
+          | _ -> raise (invalid_arg "treeify")
+      else
+         let h = n lsr 1 in
+         let f = if n mod 2 = 0 then
+                    treeify_g
+                 else
+                    treeify_f
+         in
+            match treeify_f h l with
+               (left, x :: l) -> let right, l' = f h l
+                                 in new_black x left right, l'
+             | _ -> raise (invalid_arg "treeify")
+
+   and treeify_g n l =
+      if n = 1 then
+         Leaf, l
+      else
+         let h = n lsr 1 in
+         let f = if n mod 2 = 0 then
+                    treeify_g
+                 else
+                    treeify_f
+         in
+            match f h l with
+               (left, x :: l) -> let right, l' = treeify_g h l
+                                 in new_black x left right, l'
+             | _ -> raise (invalid_arg "treeify")
+
+   (*
+    * Build a tree directly from ordered list,
+    * take length + 1 of the list.
+    *)
+   let treeify n l = (fst (treeify_g n l))
+
+   (*
     * Convert to a list.
     *)
    let rec to_list_aux l = function
@@ -1046,6 +1087,7 @@ struct
     | Leaf ->
          s1
 
+   (* TODO: LDB: implement linear union *)
    let union s1 s2 =
       let size1 = cardinality s1 in
       let size2 = cardinality s2 in
@@ -1155,6 +1197,19 @@ struct
          arg
 
    (*
+    * Fold in reverse direction, useful for define
+    * other operations.
+    *)
+   let rec fold_r f arg = function
+      Black (key, left, right, _)
+    | Red (key, left, right, _) ->
+         let arg = fold_r f arg right in
+         let arg = f arg key in
+            fold_r f arg left
+    | Leaf ->
+         arg
+
+   (*
     * Equality of sets.
     *)
    let equal set1 set2 =
@@ -1166,15 +1221,17 @@ struct
          false
 
    (*
-    * BUG: these functions are too slow!
-    * Could be much more optimized.
+    * Optimization by construct the tree directly.
     *)
+   let add_item i (n, l) = (succ n, i :: l)
+
    let filter pred s =
-      fold (fun s' x ->
-            if pred x then
-               add s' x
-            else
-               s') empty s
+      let n, l = fold_r (fun s x ->
+                       if pred x then
+                          add_item x s
+                       else
+                          s) (1, []) s
+      in treeify n l
 
    let inter s1 s2 =
       let size1 = cardinality s1 in
@@ -1183,20 +1240,23 @@ struct
          if size1 < size2 then
             s1, s2
          else
-            s2, s1
-      in
-         fold (fun s3 x ->
-               if mem s2 x then
-                  add s3 x
-               else
-                  s3) empty s1
+            s2, s1 in
+      let n, l = fold_r (fun s3 x ->
+                       if mem s2 x then
+                          add_item x s3
+                       else
+                          s3) (1, []) s1
+      in treeify n l
 
    let partition pred s =
-      fold (fun (s1, s2) x ->
-            if pred x then
-               add s1 x, s2
-            else
-               s1, add s2 x) (empty, empty) s
+      let (n1, l1), l2 =
+         fold_r (fun (s1, s2) x ->
+               if pred x then
+                  add_item x s1, s2
+               else
+                  s1, x :: s2) ((1, []), []) s in
+      let n2 = cardinality s - n1 + 2
+      in treeify n1 l1, treeify n2 l2
 
    let rec diff s = function
       Black (key, left, right, _)
@@ -1219,9 +1279,9 @@ struct
 
    let compare s1 s2 =
       let rec compare s1 s2 =
-	 match s1, s2 with
-	    x1 :: s1, x2 :: s2 ->
-	       let cmp = Ord.compare x1 x2 in
+   match s1, s2 with
+      x1 :: s1, x2 :: s2 ->
+         let cmp = Ord.compare x1 x2 in
                   if cmp = 0 then
                      compare s1 s2
                   else
@@ -1355,28 +1415,6 @@ struct
             Lm_printf.output_string out "Leaf"
 
    let print = pp_print
-end
-
-module Make (Ord : OrderedType) : S with type elt = Ord.t =
-struct
-   module XSet = LmMake (Ord)
-
-   include XSet
-
-   let mem x s =
-      XSet.mem s x
-
-   let add x s =
-      XSet.add s x
-
-   let remove x s =
-      XSet.remove s x
-
-   let fold f s x =
-      XSet.fold (fun x y -> f y x) x s
-
-   let partition f s =
-      fst (XSet.partition f s)
 end
 
 (*
