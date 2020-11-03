@@ -1087,11 +1087,31 @@ struct
     | Leaf ->
          s1
 
-   (* TODO: LDB: implement linear union *)
+   let rec merge size xs ys =
+      match xs, ys with
+       | [], _ -> size, ys
+       | _, [] -> size, xs
+       | x :: tx, y :: ty ->
+            if Ord.compare x y = 0
+            then let s, rs = merge (pred size) tx ty in
+                    s, x :: rs
+            else if Ord.compare x y < 0
+            then let s, rs = merge size tx ys in
+                    s, x :: rs
+            else let s, rs = merge size xs ty in
+                    s, y :: rs
+
+   let compare_height x y =
+      compare (log2 1 (succ x)) (log2 1 (succ y))
+
    let union s1 s2 =
       let size1 = cardinality s1 in
       let size2 = cardinality s2 in
-         if size1 < size2 then
+      let comp = compare_height size1 size2 in
+         if comp = 0 then
+            let s, l = (merge (size1 + size2 + 1) (to_list s1) (to_list s2)) in
+               treeify s l
+         else if comp < 0 then
             union_aux s2 s1
          else
             union_aux s1 s2
