@@ -1,5 +1,5 @@
 (*
- * Sets of strings.
+ * Sets of integers.
  *
  * ----------------------------------------------------------------
  *
@@ -31,7 +31,7 @@
  *)
 
 (*
- * String sets and string tables
+ * Int sets and int tables
  *)
 module OrderedInt =
  struct
