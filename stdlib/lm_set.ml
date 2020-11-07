@@ -1092,10 +1092,11 @@ struct
        | [], _ -> size, ys
        | _, [] -> size, xs
        | x :: tx, y :: ty ->
-            if Ord.compare x y = 0
+            let comp = Ord.compare x y in
+            if comp = 0
             then let s, rs = merge (pred size) tx ty in
                     s, x :: rs
-            else if Ord.compare x y < 0
+            else if comp < 0
             then let s, rs = merge size tx ys in
                     s, x :: rs
             else let s, rs = merge size xs ty in
@@ -1253,19 +1254,38 @@ struct
                           s) (1, []) s
       in treeify n l
 
+   let rec distinct size xs ys =
+      match xs, ys with
+         [], _ -> size, []
+       | _, [] -> size, []
+       | x :: tx, y :: ty ->
+            let comp = Ord.compare x y in
+               if comp = 0
+               then let s, rs = distinct (succ size) tx ty in
+                       s, x :: rs
+               else if comp < 0
+               then distinct size tx ys
+               else distinct size xs ty
+
    let inter s1 s2 =
       let size1 = cardinality s1 in
       let size2 = cardinality s2 in
-      let s1, s2 =
-         if size1 < size2 then
-            s1, s2
+      let comp = compare_height size1 size2 in
+      let n, l =
+         if comp = 0 then
+            distinct 1 (to_list s1) (to_list s2)
          else
-            s2, s1 in
-      let n, l = fold_r (fun s3 x ->
-                       if mem s2 x then
-                          add_item x s3
-                       else
-                          s3) (1, []) s1
+            let s1, s2 =
+               if comp < 0 then
+                  s1, s2
+               else
+                  s2, s1
+            in
+               fold_r (fun s3 x ->
+                     if mem s2 x then
+                        add_item x s3
+                     else
+                        s3) (1, []) s1
       in treeify n l
 
    let partition pred s =
