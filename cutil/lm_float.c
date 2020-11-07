@@ -142,8 +142,9 @@ value float80_of_string(value s) {
 
    /* Load the string value. */
    buffer = String_val(s);
-#if 0
-   /* BUG: Looks like strtold does not work: glibc-2.2.2, Aug 31, 2001 --jyh */
+#if 1
+   /* Looks like strtold does not work: glibc-2.2.2, Aug 31, 2001 --jyh */
+   /* XXX: LDB: this should no more a problem since 2020 */
    val = strtold(buffer, NULL);
 #else
    val = strtod(buffer, NULL);
@@ -337,10 +338,11 @@ value float80_atan2(value f1, value f2) {
 }
 
 /*
- * BUG: these are hopefullu temporary.
+ * XXX: these are hopefullu temporary.
  * Use them for assembling floats.
  * Error handling is performed at the C level.
  */
+#if 0
 value c_blit_float32(value x_val, value buf_val, value off_val)
 {
     unsigned char *buf;
@@ -383,3 +385,4 @@ value c_blit_float80(value x_val, value buf_val, value off_val)
     memcpy(buf + off, &x, 10);
     return Val_unit;
 }
+#endif

@@ -65,9 +65,10 @@ val      min     : float80 -> float80 -> float80
 val      max     : float80 -> float80 -> float80
 
 (*
- * BUG: these are hopefully temporary.
+ * these are hopefully temporary.
  * We use them to blit the float into a buffer area.
- *)
+
 val blit_float32 : float80 -> bytes -> int -> unit
 val blit_float64 : float80 -> bytes -> int -> unit
 val blit_float80 : float80 -> bytes -> int -> unit
+*)
