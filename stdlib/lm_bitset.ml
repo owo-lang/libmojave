@@ -56,11 +56,34 @@ let get bits i =
 
 let union a b =
    let alen, blen = Array.length a, Array.length b in
-   let sl, bits = if alen > blen then alen, Array.copy a else blen, Array.copy b in
+   let sl, bits = if alen > blen
+                  then alen, Array.copy a
+                  else blen, Array.copy b in
       for i = 0 to sl-1 do
          bits.(i) <- a.(i) lor b.(i)
       done;
       bits
+
+(* binary search on integer
+let fill_right_bits x = x lxor (x - 1)
+
+let bit_mask n =
+   let x = 1 lsl (pred n) in
+      fill_right_bits x *)
+
+let rightmost_bit offset x = offset + Lm_int_util.ctz x
+
+let find_first a =
+   let bound = Array.length a - 1 in
+   let rec find n =
+      if n > bound then raise Not_found else
+      if a.(n) > 0
+      then rightmost_bit (n * int_size) a.(n)
+      else find (succ n)
+   in find 0
+
+let is_empty = Array.for_all (fun n -> n = 0)
+
 
 (*
  * -*-
