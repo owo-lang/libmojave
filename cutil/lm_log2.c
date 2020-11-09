@@ -28,6 +28,19 @@
 #include <caml/memory.h>
 #include <caml/fail.h>
 
+#ifdef __GNUC__ /* use GCC builtin function */
+
+static int log2_64 (uint64_t value)
+{
+    return 31 - __builtin_clz(value);
+}
+
+static int ctz (unsigned value)
+{
+    return __builtin_ctz(value);
+}
+
+#else /* Portable fast log2 */
 const int8_t tab64[64] = {
     63,  0, 58,  1, 59, 47, 53,  2,
     60, 39, 48, 27, 54, 33, 42,  3,
@@ -49,15 +62,45 @@ static int log2_64 (uint64_t value)
     return tab64[((uint64_t)((value - (value >> 1))*0x07EDD5E59A4E28C2)) >> 58];
 }
 
+static int ntz(unsigned x) {
+    unsigned y;
+    int n;
+
+    if (x == 0) return 32;
+    n = 31;
+    y = x <<16; if (y != 0) {n = n-16; x = y;}
+    y = x << 8; if (y != 0) {n = n-8; x = y;}
+    y = x << 4; if (y != 0) {n = n-4; x = y;}
+    y = x << 2; if (y != 0) {n = n-2; x = y;}
+    y = x << 1; if (y != 0) {n = n-1;}
+    return n;
+}
+
+#endif /* is GCC compatible? */
+
 value lm_ilog2(value i)
 {
     CAMLparam1(i);
-    uint64_t val;
+    int val, res;
 
     val = Int_val(i);
     if (val > 0) {
-        CAMLreturn(Val_int(log2_64(val)));
+        res = log2_64(val);
+    } else {
+        res = -1;
     }
 
-    CAMLreturn(Val_int(-1));
+    CAMLreturn(Val_int(res));
+}
+
+value lm_ctz(value i)
+{
+    CAMLparam1(i);
+    int val;
+
+    val = Int_val(i);
+    if (val <= 0)
+        caml_invalid_argument("ctz: argument cannot be negative or zero.");
+
+    CAMLreturn(Val_int(ctz(val)));
 }

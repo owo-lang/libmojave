@@ -35,7 +35,10 @@
  * jyh@cs.cornell.edu
  *)
 
-
+(*
+ * Count trailing zeros.
+ *)
+external ctz : int -> int = "lm_ctz"
 
 (*
  * Compute log base 2, rounds down.

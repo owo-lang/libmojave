@@ -29,6 +29,11 @@
  *)
 
 (*
+ * Count trailing zeros.
+ *)
+val ctz : int -> int
+
+(*
  * Computing log base 2 of a number.
  * Rounds down.
  *)
