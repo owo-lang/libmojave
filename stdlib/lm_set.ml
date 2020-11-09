@@ -987,11 +987,7 @@ struct
    (*
     * Log of a number.
     *)
-   let rec log2 i j =
-      if 1 lsl i >= j then
-         i
-      else
-         log2 (succ i) j
+   let log2 = Lm_int_util.log2
 
    (*
     * Build a set from a list.
@@ -1019,7 +1015,7 @@ struct
     | elements ->
          let elements = Array.of_list elements in
          let length = Lm_array_util.distinct compare elements in
-         let max_depth = pred (log2 1 (succ length)) in
+         let max_depth = pred (log2 (succ length)) in
             of_sorted_array 0 max_depth elements 0 length
 
    (*
@@ -1103,7 +1099,7 @@ struct
                     s, y :: rs
 
    let compare_height x y =
-      compare (log2 1 (succ x)) (log2 1 (succ y))
+      compare (log2 (succ x)) (log2 (succ y))
 
    let union s1 s2 =
       let size1 = cardinality s1 in

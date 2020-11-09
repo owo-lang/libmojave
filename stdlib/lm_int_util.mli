@@ -29,7 +29,7 @@
  *)
 
 (*
- * Slow algorithm for computing log base 2 of a number.
+ * Computing log base 2 of a number.
  * Rounds down.
  *)
 val log2 : int -> int

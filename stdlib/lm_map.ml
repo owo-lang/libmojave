@@ -1086,11 +1086,7 @@ struct
    (*
     * Log of a number.
     *)
-   let rec log2 i j =
-      if 1 lsl i >= j then
-         i
-      else
-         log2 (succ i) j
+   let log2 = Lm_int_util.log2
 
    (*
     * Build a set from a list.
@@ -1123,7 +1119,7 @@ struct
        | elements ->
             let elements = Array.of_list elements in
             let length = Array.length elements in
-            let max_depth = pred (log2 1 (succ length)) in
+            let max_depth = pred (log2 (succ length)) in
                of_array 0 max_depth elements 0 length
 
    (*

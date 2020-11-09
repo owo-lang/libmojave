@@ -35,10 +35,16 @@
  * jyh@cs.cornell.edu
  *)
 
+
+
 (*
- * Slow algorithm for log base 2.
- * Rounds down.
+ * Compute log base 2, rounds down.
+ * Return -1 if n <= 0.
  *)
+
+external log2 : int -> int = "lm_ilog2"
+
+(* The slow algorithm
 let log2 =
    let rec search j i =
       if 1 lsl j > i then
@@ -47,6 +53,7 @@ let log2 =
          search (succ j) i
    in
       search 0
+ *)
 
 (*
  * -*-
