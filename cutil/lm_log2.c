@@ -1,5 +1,5 @@
 /*
-   Fast integer log2.
+   Fast integer log2, ctz.
    Copyright (C) 2020 LdBeth
 
    This library is free software; you can redistribute it and/or
@@ -62,11 +62,11 @@ static int log2_64 (uint64_t value)
     return tab64[((uint64_t)((value - (value >> 1))*0x07EDD5E59A4E28C2)) >> 58];
 }
 
-static int ntz(unsigned x) {
+static int ctz(unsigned x) {
     unsigned y;
     int n;
 
-    if (x == 0) return 32;
+    /* if (x == 0) return 32; */
     n = 31;
     y = x <<16; if (y != 0) {n = n-16; x = y;}
     y = x << 8; if (y != 0) {n = n-8; x = y;}
@@ -99,8 +99,8 @@ value lm_ctz(value i)
     int val;
 
     val = Int_val(i);
-    if (val <= 0)
-        caml_invalid_argument("ctz: argument cannot be negative or zero.");
+    if (val == 0)
+        caml_invalid_argument("ctz: argument cannot be zero.");
 
     CAMLreturn(Val_int(ctz(val)));
 }
