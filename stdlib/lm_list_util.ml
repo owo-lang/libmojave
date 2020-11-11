@@ -81,21 +81,6 @@ let rec iter3 f l1 l2 l3 =
          raise (Invalid_argument "iter3")
 
 (*
- * Filter items out of a list.
- *)
-let rec filter f = function
-   [] -> []
- | (h::t) as l ->
-      if f h then
-         let rem = filter f t in
-            if rem == t then
-               l
-            else
-               h::rem
-      else
-         filter f t
-
-(*
  * Insert an element into a position.
  *)
 let rec insert_nth i x l =
@@ -237,15 +222,6 @@ let rec fold_left3 f arg l1 l2 l3 =
 (*
  * Find the elemnt.
  *)
-let rec find f = function
-   h::t ->
-      if f h then
-         h
-      else
-         find f t
- | [] ->
-      raise Not_found
-
 let rec find_item_aux f i = function
    h::t ->
       if f h then

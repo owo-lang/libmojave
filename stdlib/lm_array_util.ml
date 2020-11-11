@@ -59,12 +59,6 @@ let exists_true v =
    in
       search 0 (Array.length v) v
 
-let for_all f v =
-   let rec search f i len v =
-      i = len || (f v.(i) && search f (succ i) len v)
-   in
-      search f 0 (Array.length v) v
-
 let for_all2 f a1 a2 =
    let len = Array.length a1 in
       Array.length a1 = Array.length a2 &&
@@ -72,17 +66,6 @@ let for_all2 f a1 a2 =
          (i = len) || (f a1.(i) a2.(i) && apply (i + 1))
       in
          apply 0)
-
-(*
- * Membership in an array.
- *)
-let mem i v =
-   let l = Array.length v in
-   let rec aux j =
-      j < l && ( i = v.(j) ||
-                aux (j + 1) )
-   in
-      aux 0
 
 (*
  * Membership in an array.
@@ -103,14 +86,6 @@ let index i v =
 (*
  * Membership in an array.
  *)
-let exists f v =
-   let l = Array.length v in
-   let rec aux j =
-      j < l && ( f v.(j) ||
-                aux (j + 1) )
-   in
-      aux 0
-
 let find_index f v =
    let l = Array.length v in
    let rec aux j =
@@ -123,23 +98,6 @@ let find_index f v =
          raise Not_found
    in
       aux 0
-
-(*
- * Iterate over two arrays.
- *)
-let iter2 f a1 a2 =
-   let len = Array.length a1 in
-      if Array.length a2 <> len then
-         raise (Failure "Array.iter2")
-      else
-         let rec apply f a1 a2 i len =
-            if i < len then
-               begin
-                  f a1.(i) a2.(i);
-                  apply f a1 a2 (i + 1) len
-               end
-         in
-            apply f a1 a2 0 len
 
 let append_list a = function
    [] -> a

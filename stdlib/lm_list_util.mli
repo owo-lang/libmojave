@@ -68,7 +68,6 @@ val rev_map : ('a -> 'b) -> 'a list -> 'b list
 (*
  * Find the element that satisfies a predicate
  *)
-val find : ('a -> bool) -> 'a list -> 'a
 (* Now find its index *)
 val find_item : ('a -> bool) -> 'a list -> int
 (* By equality *)
@@ -158,9 +157,6 @@ val remove_elements : bool list -> 'a list -> 'a list
 val remove_suffix   : 'a list -> 'a list -> 'a list
 val insert_nth      : int -> 'a -> 'a list -> 'a list
 val remove_nth      : int -> 'a list -> 'a list
-
-(* Filter items out of a list *)
-val filter : ('a -> bool) -> 'a list -> 'a list
 
 (*
  * Set operations.
