@@ -24,7 +24,6 @@ if $(DETECT_FS_CASE_SENSITIVE)
 #
 CFILES[] =
     lm_heap
-    lm_abstract
     lm_float
     lm_log2
     lm_ncurses
