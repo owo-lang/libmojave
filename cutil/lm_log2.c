@@ -28,7 +28,7 @@
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-#if defined __GNUC__ && defined __x86_64 /* use GCC builtin function */
+#if defined __GNUC__ && defined __LP64__ /* use GCC builtin function */
 
 static int log2_64 (uint64_t value)
 {
@@ -80,9 +80,9 @@ int log2_32 (uint32_t value)
     return tab32[(uint32_t)(value*0x07C4ACDD) >> 27];
 } */
 
-static int ctz(unsigned long x) {
+static int ctz(unsigned long x)
+{
     /* convert to rightmost 1 bit */
-
     return log2_64(x & -x);
 }
 
