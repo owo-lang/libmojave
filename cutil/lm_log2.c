@@ -28,19 +28,20 @@
 #include <caml/memory.h>
 #include <caml/fail.h>
 
-#ifdef __GNUC__ /* use GCC builtin function */
+#if defined __GNUC__ && defined __x86_64 /* use GCC builtin function */
 
 static int log2_64 (uint64_t value)
 {
-    return 31 - __builtin_clz(value);
+    return 63 - __builtin_clzl(value);
 }
 
-static int ctz (unsigned value)
+static int ctz (unsigned long value)
 {
-    return __builtin_ctz(value);
+    return __builtin_ctzl(value);
 }
 
 #else /* Portable fast log2 */
+/* u64 version */
 const int8_t tab64[64] = {
     63,  0, 58,  1, 59, 47, 53,  2,
     60, 39, 48, 27, 54, 33, 42,  3,
@@ -62,18 +63,27 @@ static int log2_64 (uint64_t value)
     return tab64[((uint64_t)((value - (value >> 1))*0x07EDD5E59A4E28C2)) >> 58];
 }
 
-static int ctz(unsigned x) {
-    unsigned y;
-    int n;
+/* 32bit version
+const int8_t tab32[32] = {
+    0,  9,  1, 10, 13, 21,  2, 29,
+    11, 14, 16, 18, 22, 25,  3, 30,
+    8, 12, 20, 28, 15, 17, 24,  7,
+    19, 27, 23,  6, 26,  5,  4, 31};
 
-    /* if (x == 0) return 32; */
-    n = 31;
-    y = x <<16; if (y != 0) {n = n-16; x = y;}
-    y = x << 8; if (y != 0) {n = n-8; x = y;}
-    y = x << 4; if (y != 0) {n = n-4; x = y;}
-    y = x << 2; if (y != 0) {n = n-2; x = y;}
-    y = x << 1; if (y != 0) {n = n-1;}
-    return n;
+int log2_32 (uint32_t value)
+{
+    value |= value >> 1;
+    value |= value >> 2;
+    value |= value >> 4;
+    value |= value >> 8;
+    value |= value >> 16;
+    return tab32[(uint32_t)(value*0x07C4ACDD) >> 27];
+} */
+
+static int ctz(unsigned long x) {
+    /* convert to rightmost 1 bit */
+
+    return log2_64(x & -x);
 }
 
 #endif /* is GCC compatible? */
@@ -81,14 +91,12 @@ static int ctz(unsigned x) {
 value lm_ilog2(value i)
 {
     CAMLparam1(i);
-    int val, res;
+    long int val;
+    int res = -1;
 
-    val = Int_val(i);
-    if (val > 0) {
+    val = Long_val(i);
+    if (val > 0)
         res = log2_64(val);
-    } else {
-        res = -1;
-    }
 
     CAMLreturn(Val_int(res));
 }
@@ -96,9 +104,9 @@ value lm_ilog2(value i)
 value lm_ctz(value i)
 {
     CAMLparam1(i);
-    int val;
+    long int val;
 
-    val = Int_val(i);
+    val = Long_val(i);
     if (val == 0)
         caml_invalid_argument("ctz: argument cannot be zero.");
 
