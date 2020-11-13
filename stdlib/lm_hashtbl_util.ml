@@ -52,10 +52,7 @@ let add_list tbl l =
  *)
 let add_hashtbl dst src =
    Hashtbl.iter (fun key value ->
-         (try Hashtbl.remove dst key with
-             Not_found ->
-                ());
-         Hashtbl.add dst key value) src
+         Hashtbl.replace dst key value) src
 
 (*
  * -*-
