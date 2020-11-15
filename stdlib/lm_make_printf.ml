@@ -68,8 +68,8 @@
  * and you may distribute the linked executables.  See the file
  * LICENSE.libmojave for more details.
  *
- * Author: Jason Hickey
- * @email{jyh@cs.caltech.edu}
+ * Original version author: Jason Hickey @email{jyh@cs.caltech.edu}
+ * Updated by: LdBeth @email{ldbeth@sdf.org}
  * @end[license]
  *)
 

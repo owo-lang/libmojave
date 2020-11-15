@@ -1450,11 +1450,21 @@ end;;
  *)
 
 (*
- * The default function for combinding hash values.
- * XXX: JYH: we should try using a smarter hash function.
+ * The default function for combining hash values.
+ *
+ * XXX: The original one is discarded due to poor property of XOR
+ * The new implementation is a variant of Bernstein's hash:
+
+   seed <- 1009
+   factor <- 9176
+   hash <- seed * factor + i1
+   hash <- hash * factor + i2
+
+ * where the choice of seed and factor is not arbitrary and aimed
+ * for less collisions, but better combination could exist.
  *)
 let hash_combine i1 i2 =
-   (i1 lsl 2) lxor (i1 lsr 2) lxor i2
+   (0x8d4658 + i1) * 9176 + i2
 
 (*
  * Hash a list of integers.

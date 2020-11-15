@@ -42,7 +42,7 @@
  *    @<n>: print_length
  *    @@: plain @ char
  *
- * Note the copious use of Obj.magic
+ * This module now relies on CamlinternalFormat
  *
  * ----------------------------------------------------------------
  *
