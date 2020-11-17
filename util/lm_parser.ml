@@ -262,7 +262,7 @@ struct
     *)
    let ivar_list_hash hash vars =
       List.fold_left (fun hash v ->
-            hash_combine hash (IVar.hash v)) hash vars
+            hash_factor hash (IVar.hash v)) hash vars
 
    let rec ivar_list_compare vars1 vars2 =
       match vars1, vars2 with
@@ -358,7 +358,7 @@ struct
        *)
       let hash state =
          ProdItemSet.fold (fun hash item ->
-               hash_combine hash (ProdItem.hash item)) 0 state.info_state_items
+               hash_factor hash (ProdItem.hash item)) hash_seed state.info_state_items
 
       let compare state1 state2 =
          ProdItemSet.compare state1.info_state_items state2.info_state_items

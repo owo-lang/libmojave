@@ -1466,6 +1466,11 @@ end;;
 let hash_combine i1 i2 =
    (0x8d4658 + i1) * 9176 + i2
 
+let hash_seed = 1009
+
+let hash_factor hash i =
+   hash * 9176 + i
+
 (*
  * Hash a list of integers.
  *)
