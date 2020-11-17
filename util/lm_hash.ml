@@ -480,9 +480,8 @@ end
 
 (* %%MAGICBEGIN%% *)
 let digest_length = 16
-(* %%MAGICEND%% *)
-
 external ranhash : int -> int = "lm_ranhash"
+(* %%MAGICEND%% *)
 
 (************************************************
  * Integer hashes.

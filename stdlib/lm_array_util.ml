@@ -59,14 +59,6 @@ let exists_true v =
    in
       search 0 (Array.length v) v
 
-let for_all2 f a1 a2 =
-   let len = Array.length a1 in
-      Array.length a1 = Array.length a2 &&
-      (let rec apply i =
-         (i = len) || (f a1.(i) a2.(i) && apply (i + 1))
-      in
-         apply 0)
-
 (*
  * Membership in an array.
  *)
@@ -152,6 +144,23 @@ let replace a i j = function
                aux (succ k) tl
          in aux (succ i) tl
       else raise (Invalid_argument "Lm_array_util.replace")
+
+(*
+ * fold_left + map = fold_map
+ *)
+let fold_map f x a =
+   match Array.length a with
+      0 -> x, [||]
+    | 1 -> let x, y = f x (Array.unsafe_get a 0) in
+              x, Array.make 1 y
+    | l -> let x, y = f x (Array.unsafe_get a 0) in
+           let r1, r2 = ref x, Array.make l y in
+              for i = 1 to l-1 do
+                 let x, y = f !r1 (Array.unsafe_get a i) in
+                    Array.unsafe_set r2 i y;
+                    r1 := x
+              done;
+              !r1, r2
 
 (*
  * Map over a subarray.

@@ -38,8 +38,10 @@ val find_index : ('a -> bool) -> 'a array -> int
 val all_true : bool array -> bool
 val exists_true : bool array -> bool
 
-(* Returns false if lengths mismatch *)
-val for_all2 : ('a -> 'b -> bool) -> 'a array -> 'b array -> bool
+(*
+ * fold_map
+ *)
+val fold_map : ('a -> 'b -> 'a * 'c) -> 'a -> 'b array -> 'a * 'c array
 
 (*
  * replace A i j B creates a copy of array A
