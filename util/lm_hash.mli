@@ -1,4 +1,4 @@
-(*x
+(*
  * Various hash functions and hash-cons tables.
  *
  * ----------------------------------------------------------------

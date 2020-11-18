@@ -1,5 +1,5 @@
 /*
- *
+ * A pseudo random sequence indexed by long int for hashing.
  *
  * ----------------------------------------------------------------
  *

@@ -544,14 +544,19 @@ value lm_ssl_flush(value v_info)
     info = SslInfo_val(v_info);
     enter_blocking_section();
     bio = SSL_get_wbio(info->ssl);
-    if(bio)
+    if(bio) {
         /* XXX: BUG!
          * According to the man page:
          * BIO_flush(), because it can write data may return 0 or -1 indicating that the call should be retried later
          * in a similar manner to BIO_write().  The BIO_should_retry() call should be used and appropriate action
-         * taken is the call fails.
+         * taken if the call fails.
+         * BIO_should_retry:
+         * SSL BIOs are the only current exception to this rule: they can request a retry even if the underlying I/O
+         * structure is blocking, if a handshake occurs during a call to BIO_read(). An application can retry the failed
+         * call immediately or avoid this situation by setting SSL_MODE_AUTO_RETRY on the underlying SSL structure.
          */
         BIO_flush(bio);
+    };
     leave_blocking_section();
     return Val_unit;
 }

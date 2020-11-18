@@ -23,7 +23,6 @@ if $(DETECT_FS_CASE_SENSITIVE)
 # LibMojave C files
 #
 CFILES[] =
-    lm_heap
     lm_float
     lm_log2
     lm_ranhash

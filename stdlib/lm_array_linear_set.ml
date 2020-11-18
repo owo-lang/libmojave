@@ -51,6 +51,7 @@ struct
    let make = Array.make
    let iter = Array.iter
    let map = Array.map
+   let fold_map = Lm_array_util.fold_map
    let of_list = Array.of_list
    let to_list = Array.to_list
    let lazy_apply = Array.map

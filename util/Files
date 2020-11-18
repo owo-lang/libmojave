@@ -22,7 +22,6 @@ UTIL_FILES[] =
     lm_location
     lm_position
     lm_attribute
-    lm_parse_id
     lm_readline
     lm_terminfo
     lm_ncurses

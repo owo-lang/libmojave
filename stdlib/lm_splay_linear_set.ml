@@ -149,6 +149,21 @@ struct
     | { tree = Offset (_, t) } ->
          fold f x t
 
+   let rec fold_map (f : 'a -> elt -> 'a * elt) x = function
+      { tree = Leaf } ->
+         x, { tree = Leaf }
+    | { tree = Node (ind, e, t1, t2, i) } ->
+         let a1, lt = fold_map f x t1 in
+         let a2, el = f a1 e in
+         let a3, rt = fold_map f a2 t2 in
+            a3, { tree = Node (ind, el, lt, rt, i) }
+    | { tree = Lazy (f', tree) } as t ->
+         t.tree <- go_down f' tree;
+         fold_map f x t
+    | { tree = Offset (i, t) } ->
+         let a, tr = fold_map f x t in
+         a, { tree = Offset (i, tr) }
+
    let rec of_list_aux max start lst =
       match max, lst with
          _,[]
