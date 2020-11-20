@@ -88,9 +88,9 @@ static int ctz(unsigned long x)
 
 #endif /* is GCC compatible? */
 
-value lm_ilog2(value i)
+value lm_ilog2_byte(value i)
 {
-    CAMLparam1(i);
+    /* CAMLparam1(i); */
     long int val;
     int res = -1;
 
@@ -98,17 +98,30 @@ value lm_ilog2(value i)
     if (val > 0)
         res = log2_64(val);
 
-    CAMLreturn(Val_int(res));
+    return Val_int(res);
 }
 
-value lm_ctz(value i)
+value lm_ctz_byte(value i)
 {
-    CAMLparam1(i);
+    /* CAMLparam1(i); */
     long int val;
 
     val = Long_val(i);
-    if (val == 0)
-        caml_invalid_argument("ctz: argument cannot be zero.");
 
-    CAMLreturn(Val_int(ctz(val)));
+    return Val_int(ctz(val));
+}
+
+intnat lm_ilog2(intnat i)
+{
+    intnat res = -1;
+
+    if (i > 0)
+      res = log2_64(i);
+
+    return res;
+}
+
+intnat lm_ctz(intnat i)
+{
+    return ctz(i);
 }

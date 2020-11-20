@@ -49,9 +49,9 @@ static uint64_t ranhash(uint64_t v)
  */
 value lm_ranhash(value v_i)
 {
-    CAMLparam1(v_i);
+    /* CAMLparam1(v_i); */
     long int val = Long_val(v_i);
     int res = ranhash(val) & 0x7fffffff;
 
-    CAMLreturn(Val_int(res));
+    return Val_int(res);
 }

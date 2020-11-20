@@ -29,15 +29,15 @@
  *)
 
 (*
- * Count trailing zeros.
+ * Count trailing zeros. Undefined if argument is zero.
  *)
-val ctz : int -> int
+external ctz : int -> int = "lm_ctz_byte" "lm_ctz" [@@untagged] [@@noalloc]
 
 (*
  * Computing log base 2 of a number.
  * Rounds down.
  *)
-val log2 : int -> int
+external log2 : int -> int = "lm_ilog2_byte" "lm_ilog2" [@@untagged] [@@noalloc]
 
 (*
  * -*-

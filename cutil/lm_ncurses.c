@@ -13,8 +13,7 @@
  */
 #define  CAML_BIND_KEY(name, key)      \
    value name(value unit) {            \
-      CAMLparam1(unit);                \
-      CAMLreturn(Val_int(key));        \
+      return Val_int(key);             \
    }
 
 
@@ -58,7 +57,7 @@ static void setwinopts(WINDOW *win, bool scrollable) {
 
 
 /*
- * The values here correspond to the order of the constant 
+ * The values here correspond to the order of the constant
  * constructors in the attr data type, in mc_ncurses.ml.
  */
 static int translate_attr(int attr) {
@@ -88,7 +87,7 @@ value caml_curses_enabled(value unit) {
 
    CAMLparam1(unit);
    CAMLreturn(getenv("TERM") ? Val_true : Val_false);
-   
+
 }
 
 
@@ -96,13 +95,13 @@ value caml_curses_initscr(value unit) {
 
    CAMLparam1(unit);
 
-   /* Initialise ncurses interface */   
+   /* Initialise ncurses interface */
    initscr();              /* Initialise screen */
    cbreak();               /* Disable character buffering */
    noecho();               /* Do not echo typed characters */
    nonl();                 /* Do not translate newline seq */
 
-   /* Setup options for the default window */   
+   /* Setup options for the default window */
    setwinopts(stdscr, TRUE);
 
    CAMLreturn(Val_unit);
@@ -127,7 +126,7 @@ value caml_curses_newwin(value nlines, value ncols, value beginy, value beginx) 
    CAMLparam4(nlines, ncols, beginy, beginx);
    CAMLlocal1(result);
    WINDOW *window;
-   
+
    /* Create and initialise the new window */
    window = newwin(Int_val(nlines), Int_val(ncols), Int_val(beginy), Int_val(beginx));
    if(window == NULL) {
@@ -146,10 +145,10 @@ value caml_curses_delwin(value mlwindow) {
 
    CAMLparam1(mlwindow);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Delete the window */
    delwin(window);
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -159,10 +158,10 @@ value caml_curses_waddch(value mlwindow, value ch) {
 
    CAMLparam2(mlwindow, ch);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Display this character */
    waddch(window, Int_val(ch));
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -172,10 +171,10 @@ value caml_curses_waddstr(value mlwindow, value str) {
 
    CAMLparam2(mlwindow, str);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Display this character */
    waddstr(window, String_val(str));
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -186,12 +185,12 @@ value caml_curses_wattron(value mlwindow, value mlattr) {
    CAMLparam2(mlwindow, mlattr);
    WINDOW *window = window_of_ml(mlwindow);
    int attr = translate_attr(Int_val(mlattr));
-   
+
    /* Turn on the indicated attribute */
    wattron(window, attr);
-   
+
    CAMLreturn(Val_unit);
-   
+
 }
 
 
@@ -200,12 +199,12 @@ value caml_curses_wattroff(value mlwindow, value mlattr) {
    CAMLparam2(mlwindow, mlattr);
    WINDOW *window = window_of_ml(mlwindow);
    int attr = translate_attr(Int_val(mlattr));
-   
+
    /* Turn off the indicated attribute */
    wattroff(window, attr);
-   
+
    CAMLreturn(Val_unit);
-   
+
 }
 
 
@@ -214,10 +213,10 @@ value caml_curses_wgetch(value mlwindow) {
    CAMLparam1(mlwindow);
    WINDOW *window = window_of_ml(mlwindow);
    int ch;
-   
+
    /* Get a character from curses */
    ch = wgetch(window);
-   
+
    /* Return the character read */
    CAMLreturn(Val_int(ch));
 
@@ -238,21 +237,21 @@ value caml_curses_wgetstr(value mlwindow) {
    int cury, curx;
    int maxy, maxx;
    int len;
-   
+
    /* Get the window extents to determine a line length */
    getyx(window, cury, curx);
    getmaxyx(window, maxy, maxx);
    len = maxx - curx - 1;
-   
+
    /* Allocate a buffer to store the results in. */
    buffer = malloc(len + 1);
    if(buffer == NULL) {
       CAMLreturn(copy_string(""));
    }
-   
+
    /* Get the line input */
    wgetnstr(window, buffer, len);
-   
+
    /* Return the character read */
    result = copy_string(buffer);
    free(buffer);
@@ -265,10 +264,10 @@ value caml_curses_wrefresh(value mlwindow) {
 
    CAMLparam1(mlwindow);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Refresh the window display */
    wrefresh(window);
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -278,10 +277,10 @@ value caml_curses_wnoutrefresh(value mlwindow) {
 
    CAMLparam1(mlwindow);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Refresh the window display; does not write to terminal! */
    wnoutrefresh(window);
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -290,10 +289,10 @@ value caml_curses_wnoutrefresh(value mlwindow) {
 value caml_curses_doupdate(value unit) {
 
    CAMLparam1(unit);
-   
+
    /* Draw pending wnoutrefresh calls to the screen. */
    doupdate();
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -305,12 +304,12 @@ value caml_curses_doupdate(value unit) {
 value caml_curses_refreshscreen(value unit) {
 
    CAMLparam1(unit);
-   
+
    /* Force redraw of entire screen (assume all lines are tainted) */
    wrefresh(curscr);
-   
+
    CAMLreturn(Val_unit);
-   
+
 }
 
 
@@ -318,10 +317,10 @@ value caml_curses_werase(value mlwindow) {
 
    CAMLparam1(mlwindow);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Erase the window display */
    werase(window);
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -331,10 +330,10 @@ value caml_curses_wclrtoeol(value mlwindow) {
 
    CAMLparam1(mlwindow);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Erase to end of current line */
    wclrtoeol(window);
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -344,10 +343,10 @@ value caml_curses_wclrtobot(value mlwindow) {
 
    CAMLparam1(mlwindow);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Erase to end of current line, then clear all remaining lines. */
    wclrtobot(window);
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -357,10 +356,10 @@ value caml_curses_wmove(value mlwindow, value y, value x) {
 
    CAMLparam3(mlwindow, y, x);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Move the cursor in the indicated window */
    wmove(window, Int_val(y), Int_val(x));
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -372,10 +371,10 @@ value caml_curses_getyx(value mlwindow) {
    CAMLlocal1(result);
    WINDOW *window = window_of_ml(mlwindow);
    int y, x;
-   
+
    /* Get the current cursor position in the indicated window. */
    getyx(window, y, x);
-   
+
    /* Construct a tuple to store the results in. */
    result = alloc_tuple(2);
    Field(result, 0) = Val_int(y);
@@ -391,10 +390,10 @@ value caml_curses_getmaxyx(value mlwindow) {
    CAMLlocal1(result);
    WINDOW *window = window_of_ml(mlwindow);
    int y, x;
-   
+
    /* Get the maximum cursor position in the indicated window. */
    getmaxyx(window, y, x);
-   
+
    /* Construct a tuple to store the results in. */
    result = alloc_tuple(2);
    Field(result, 0) = Val_int(y);
@@ -409,9 +408,9 @@ value caml_curses_scrollok(value mlwindow, value scrollable) {
    CAMLparam2(mlwindow, scrollable);
    WINDOW *window = window_of_ml(mlwindow);
 
-   /* Update window settings */   
+   /* Update window settings */
    scrollok(window, Bool_val(scrollable));
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -421,13 +420,13 @@ value caml_curses_echook(value ok) {
 
    CAMLparam1(ok);
 
-   /* Set or clear echo flag, based on the flag given. */   
+   /* Set or clear echo flag, based on the flag given. */
    if(Bool_val(ok)) {
       echo();
    } else {
       noecho();
    }
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -437,10 +436,10 @@ value caml_curses_wscrl(value mlwindow, value lines) {
 
    CAMLparam2(mlwindow, lines);
    WINDOW *window = window_of_ml(mlwindow);
-   
+
    /* Scroll the window; lines > 0, scroll UP; lines < 0, scroll DN */
    wscrl(window, Int_val(lines));
-   
+
    CAMLreturn(Val_unit);
 
 }
@@ -468,7 +467,7 @@ value caml_curses_enabled(value unit) {
 
    CAMLparam1(unit);
    CAMLreturn(Val_false);
-   
+
 }
 
 

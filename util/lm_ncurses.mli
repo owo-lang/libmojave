@@ -63,26 +63,26 @@ val key_ctrlv  : int
 
 
 val curses_enabled : bool
-val initscr : unit -> unit
-val endwin : unit -> unit
-val newwin : int -> int -> int -> int -> window
-val delwin : window -> unit
-val waddch : window -> char -> unit
-val waddstr : window -> string -> unit
-val wattron : window -> attr -> unit
-val wattroff : window -> attr -> unit
-val wgetch : window -> int
-val wgetstr : window -> string
-val wrefresh : window -> unit
-val wnoutrefresh : window -> unit
-val doupdate : unit -> unit
-val refreshscreen : unit -> unit
-val werase : window -> unit
-val wclrtoeol : window -> unit
-val wclrtobot : window -> unit
-val wmove : window -> int -> int -> unit
-val getyx : window -> int * int
-val getmaxyx : window -> int * int
-val scrollok : window -> bool -> unit
-val echook : bool -> unit
-val wscrl : window -> int -> unit
+external initscr : unit -> unit = "caml_curses_initscr"
+external endwin : unit -> unit = "caml_curses_endwin"
+external newwin : int -> int -> int -> int -> window = "caml_curses_newwin"
+external delwin : window -> unit = "caml_curses_delwin"
+external waddch : window -> char -> unit = "caml_curses_waddch"
+external waddstr : window -> string -> unit = "caml_curses_waddstr"
+external wattron : window -> attr -> unit = "caml_curses_wattron"
+external wattroff : window -> attr -> unit = "caml_curses_wattroff"
+external wgetch : window -> int = "caml_curses_wgetch"
+external wgetstr : window -> string = "caml_curses_wgetstr"
+external wrefresh : window -> unit = "caml_curses_wrefresh"
+external wnoutrefresh : window -> unit = "caml_curses_wnoutrefresh"
+external doupdate : unit -> unit = "caml_curses_doupdate"
+external refreshscreen : unit -> unit = "caml_curses_refreshscreen"
+external werase : window -> unit = "caml_curses_werase"
+external wclrtoeol : window -> unit = "caml_curses_wclrtoeol"
+external wclrtobot : window -> unit = "caml_curses_wclrtobot"
+external wmove : window -> int -> int -> unit = "caml_curses_wmove"
+external getyx : window -> int * int = "caml_curses_getyx"
+external getmaxyx : window -> int * int = "caml_curses_getmaxyx"
+external scrollok : window -> bool -> unit = "caml_curses_scrollok"
+external echook : bool -> unit = "caml_curses_echook"
+external wscrl : window -> int -> unit = "caml_curses_wscrl"

@@ -34,7 +34,7 @@ type code =
    ByteCode
  | NativeCode
 
-external lm_code : unit -> code = "lm_byte_detect" "lm_native_detect"
+external lm_code : unit -> code = "lm_byte_detect" "lm_native_detect" [@@noalloc]
 
 let code = lm_code ()
 

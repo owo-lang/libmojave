@@ -52,16 +52,16 @@ type attr =
 (***  C Interface Functions for Key Values  ***)
 
 
-external caml_key_down  : unit -> int = "caml_key_down"
-external caml_key_up    : unit -> int = "caml_key_up"
-external caml_key_left  : unit -> int = "caml_key_left"
-external caml_key_right : unit -> int = "caml_key_right"
-external caml_key_home  : unit -> int = "caml_key_home"
-external caml_key_end   : unit -> int = "caml_key_end"
-external caml_key_npage : unit -> int = "caml_key_npage"
-external caml_key_ppage : unit -> int = "caml_key_ppage"
-external caml_key_enter : unit -> int = "caml_key_enter"
-external caml_key_cancel: unit -> int = "caml_key_cancel"
+external caml_key_down  : unit -> int = "caml_key_down"  [@@noalloc]
+external caml_key_up    : unit -> int = "caml_key_up"    [@@noalloc]
+external caml_key_left  : unit -> int = "caml_key_left"  [@@noalloc]
+external caml_key_right : unit -> int = "caml_key_right" [@@noalloc]
+external caml_key_home  : unit -> int = "caml_key_home"  [@@noalloc]
+external caml_key_end   : unit -> int = "caml_key_end"   [@@noalloc]
+external caml_key_npage : unit -> int = "caml_key_npage" [@@noalloc]
+external caml_key_ppage : unit -> int = "caml_key_ppage" [@@noalloc]
+external caml_key_enter : unit -> int = "caml_key_enter" [@@noalloc]
+external caml_key_cancel: unit -> int = "caml_key_cancel" [@@noalloc]
 
 
 (***  Key Values  ***)
@@ -92,56 +92,29 @@ let key_ctrlv  = 22
 (***  C Interface Functions for Curses  ***)
 
 
-external caml_curses_enabled : unit -> bool = "caml_curses_enabled"
-external caml_curses_initscr : unit -> unit = "caml_curses_initscr"
-external caml_curses_endwin : unit -> unit = "caml_curses_endwin"
-external caml_curses_newwin : int -> int -> int -> int -> window = "caml_curses_newwin"
-external caml_curses_delwin : window -> unit = "caml_curses_delwin"
-external caml_curses_waddch : window -> char -> unit = "caml_curses_waddch"
-external caml_curses_waddstr : window -> string -> unit = "caml_curses_waddstr"
-external caml_curses_wattron : window -> attr -> unit = "caml_curses_wattron"
-external caml_curses_wattroff : window -> attr -> unit = "caml_curses_wattroff"
-external caml_curses_wgetch : window -> int = "caml_curses_wgetch"
-external caml_curses_wgetstr : window -> string = "caml_curses_wgetstr"
-external caml_curses_wrefresh : window -> unit = "caml_curses_wrefresh"
-external caml_curses_wnoutrefresh : window -> unit = "caml_curses_wnoutrefresh"
-external caml_curses_doupdate : unit -> unit = "caml_curses_doupdate"
-external caml_curses_refreshscreen : unit -> unit = "caml_curses_refreshscreen"
-external caml_curses_werase : window -> unit = "caml_curses_werase"
-external caml_curses_wclrtoeol : window -> unit = "caml_curses_wclrtoeol"
-external caml_curses_wclrtobot : window -> unit = "caml_curses_wclrtobot"
-external caml_curses_wmove : window -> int -> int -> unit = "caml_curses_wmove"
-external caml_curses_getyx : window -> int * int = "caml_curses_getyx"
-external caml_curses_getmaxyx : window -> int * int = "caml_curses_getmaxyx"
-external caml_curses_scrollok : window -> bool -> unit = "caml_curses_scrollok"
-external caml_curses_echook : bool -> unit = "caml_curses_echook"
-external caml_curses_wscrl : window -> int -> unit = "caml_curses_wscrl"
-
-
-(***  Exported Interface  ***)
-
-
+external caml_curses_enabled : unit -> bool = "caml_curses_enabled" [@@noalloc]
 let curses_enabled = caml_curses_enabled ()
-let initscr = caml_curses_initscr
-let endwin = caml_curses_endwin
-let newwin = caml_curses_newwin
-let delwin = caml_curses_delwin
-let waddch = caml_curses_waddch
-let waddstr = caml_curses_waddstr
-let wattron = caml_curses_wattron
-let wattroff = caml_curses_wattroff
-let wgetch = caml_curses_wgetch
-let wgetstr = caml_curses_wgetstr
-let wrefresh = caml_curses_wrefresh
-let wnoutrefresh = caml_curses_wnoutrefresh
-let doupdate = caml_curses_doupdate
-let refreshscreen = caml_curses_refreshscreen
-let werase = caml_curses_werase
-let wclrtoeol = caml_curses_wclrtoeol
-let wclrtobot = caml_curses_wclrtobot
-let wmove = caml_curses_wmove
-let getyx = caml_curses_getyx
-let getmaxyx = caml_curses_getmaxyx
-let scrollok = caml_curses_scrollok
-let echook = caml_curses_echook
-let wscrl = caml_curses_wscrl
+
+external initscr : unit -> unit = "caml_curses_initscr"
+external endwin : unit -> unit = "caml_curses_endwin"
+external newwin : int -> int -> int -> int -> window = "caml_curses_newwin"
+external delwin : window -> unit = "caml_curses_delwin"
+external waddch : window -> char -> unit = "caml_curses_waddch"
+external waddstr : window -> string -> unit = "caml_curses_waddstr"
+external wattron : window -> attr -> unit = "caml_curses_wattron"
+external wattroff : window -> attr -> unit = "caml_curses_wattroff"
+external wgetch : window -> int = "caml_curses_wgetch"
+external wgetstr : window -> string = "caml_curses_wgetstr"
+external wrefresh : window -> unit = "caml_curses_wrefresh"
+external wnoutrefresh : window -> unit = "caml_curses_wnoutrefresh"
+external doupdate : unit -> unit = "caml_curses_doupdate"
+external refreshscreen : unit -> unit = "caml_curses_refreshscreen"
+external werase : window -> unit = "caml_curses_werase"
+external wclrtoeol : window -> unit = "caml_curses_wclrtoeol"
+external wclrtobot : window -> unit = "caml_curses_wclrtobot"
+external wmove : window -> int -> int -> unit = "caml_curses_wmove"
+external getyx : window -> int * int = "caml_curses_getyx"
+external getmaxyx : window -> int * int = "caml_curses_getmaxyx"
+external scrollok : window -> bool -> unit = "caml_curses_scrollok"
+external echook : bool -> unit = "caml_curses_echook"
+external wscrl : window -> int -> unit = "caml_curses_wscrl"

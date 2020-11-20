@@ -36,16 +36,16 @@
  *)
 
 (*
- * Count trailing zeros.
+ * Count trailing zeros. Undefined if argument is zero.
  *)
-external ctz : int -> int = "lm_ctz"
+external ctz : int -> int = "lm_ctz_byte" "lm_ctz" [@@untagged] [@@noalloc]
 
 (*
  * Compute log base 2, rounds down.
  * Return -1 if n <= 0.
  *)
 
-external log2 : int -> int = "lm_ilog2"
+external log2 : int -> int = "lm_ilog2_byte" "lm_ilog2" [@@untagged] [@@noalloc]
 
 (* The slow algorithm
 let log2 =

@@ -38,6 +38,7 @@ CFILES[] =
     lm_uname_ext
     lm_channel
     lm_ctype
+    lm_locale
     lm_nocompare
     lm_compat_win32
     lm_unix_cutil

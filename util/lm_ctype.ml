@@ -33,12 +33,12 @@
 (************************************************************************
  * Locale functions
  *)
-external set_locale: unit -> unit = "set_locale"
-external is_print: char -> bool = "is_print"
-external is_digit: char -> bool = "is_digit"
-external is_alnum: char -> bool = "is_alnum"
-external is_upper: char -> bool = "is_upper"
-external is_graph: char -> bool = "is_graph"
+external set_locale: unit -> unit = "set_locale" [@@noalloc]
+external is_print: char -> bool = "is_print" [@@noalloc]
+external is_digit: char -> bool = "is_digit" [@@noalloc]
+external is_alnum: char -> bool = "is_alnum" [@@noalloc]
+external is_upper: char -> bool = "is_upper" [@@noalloc]
+external is_graph: char -> bool = "is_graph" [@@noalloc]
 
 let _ = set_locale ()
 

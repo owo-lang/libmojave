@@ -39,21 +39,21 @@ exception SSLSigPipe
 (*
  * SSL interface.
  *)
-val enabled        : bool
-val socket         : string -> t
-val bind           : t -> Unix.inet_addr -> int -> unit
-val getsockname    : t -> Unix.inet_addr * int
-val listen         : t -> string -> int -> unit
-val accept         : t -> t
-val connect        : t -> Unix.inet_addr -> int -> unit
-val shutdown       : t -> unit
-val close          : t -> unit
+val enabled : bool
+external socket       : string -> t                        = "lm_ssl_socket"
+external bind         : t -> Unix.inet_addr -> int -> unit = "lm_ssl_bind"
+external getsockname  : t -> Unix.inet_addr * int          = "lm_ssl_get_addr"
+external listen       : t -> string -> int -> unit         = "lm_ssl_listen"
+external accept       : t -> t                             = "lm_ssl_accept"
+external connect      : t -> Unix.inet_addr -> int -> unit = "lm_ssl_connect"
+external shutdown     : t -> unit                          = "lm_ssl_shutdown"
+external close        : t -> unit                          = "lm_ssl_close"
 
 (*
  * For restart.
  *)
-val fd             : t -> int
-val serve          : int -> string -> string -> t
+external fd        : t -> int                           = "lm_ssl_fd"
+external serve     : int -> string -> string -> t       = "lm_ssl_serve"
 
 (*
  * Buffered output.
