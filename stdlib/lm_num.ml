@@ -105,7 +105,9 @@ let le_num = Z.leq
 let gt_num = Z.gt
 let ge_num = Z.geq
 
-let is_zero n = Z.equal Z.zero n
+let is_zero n = Z.sign n == 0
+let is_pos n = Z.sign n == 1
+let is_neg n = Z.sign n == -1
 
 (************************************************************************
  * CONVERSION                                                           *

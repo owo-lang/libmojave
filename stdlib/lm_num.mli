@@ -76,6 +76,8 @@ val ge_num : num -> num -> bool
 val gt_num : num -> num -> bool
 val compare_num : num -> num -> int
 val is_zero : num -> bool
+val is_pos : num -> bool
+val is_neg : num -> bool
 
 (*
  * Conversion.
