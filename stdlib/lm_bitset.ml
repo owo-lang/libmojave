@@ -72,17 +72,26 @@ let bit_mask n =
       fill_right_bits x *)
 
 let rightmost_bit offset x = offset + Lm_int_util.ctz x
+let rightmost_off x = x land (x - 1)
 
-let find_first a =
-   let bound = Array.length a - 1 in
-   let rec find n =
-      if n > bound then raise Not_found else
-      if a.(n) > 0
-      then rightmost_bit (n * int_size) a.(n)
-      else find (succ n)
-   in find 0
+let iter f a =
+   let b = Array.length a - 1 in
+   let rec inner n x =
+      f (rightmost_bit (n * int_size) x);
+      let next = rightmost_off x in
+         if next > 0
+         then inner n next in
+   let rec aux n =
+      if n > b then () else
+         let x = a.(n) in
+            if x > 0
+            then (inner n x;
+                  aux (succ n))
+            else aux (succ n)
+   in aux 0
 
-let is_empty = Array.for_all (fun n -> n = 0)
+
+let is_empty = Array.for_all (fun n -> n == 0)
 
 
 (*
