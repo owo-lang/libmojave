@@ -40,6 +40,11 @@ static int ctz (unsigned long value)
     return __builtin_ctzl(value);
 }
 
+static int cnt (unsigned long value)
+{
+    return __builtin_popcountl(value);
+}
+
 #else /* Portable fast log2 */
 /* u64 version */
 const int8_t tab64[64] = {
@@ -86,6 +91,17 @@ static int ctz(unsigned long x)
     return log2_64(x & -x);
 }
 
+static int cnt(unsigned long x)
+{
+  /* simple approach without parallel */
+    int c;
+    for (c = 0; x; c++)
+    {
+        x &= x-1;
+    }
+    return c;
+}
+
 #endif /* is GCC compatible? */
 
 value lm_ilog2_byte(value i)
@@ -111,6 +127,16 @@ value lm_ctz_byte(value i)
     return Val_int(ctz(val));
 }
 
+value lm_cnt_byte(value i)
+{
+  /* CAMLparam1(i); */
+  long int val;
+
+  val = Long_val(i);
+
+  return Val_int(cnt(val));
+}
+
 intnat lm_ilog2(intnat i)
 {
     intnat res = -1;
@@ -124,4 +150,9 @@ intnat lm_ilog2(intnat i)
 intnat lm_ctz(intnat i)
 {
     return ctz(i);
+}
+
+intnat lm_cnt(intnat i)
+{
+    return cnt(i);
 }

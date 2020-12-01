@@ -39,6 +39,7 @@ val set : t -> int -> unit
 val reset : t -> int -> unit
 val get : t -> int -> bool
 val union : t -> t -> t
+val count : t -> int
 val iter : (int -> unit) -> t -> unit
 val is_empty : t -> bool
 

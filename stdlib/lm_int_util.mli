@@ -40,6 +40,11 @@ external ctz : int -> int = "lm_ctz_byte" "lm_ctz" [@@untagged] [@@noalloc]
 external log2 : int -> int = "lm_ilog2_byte" "lm_ilog2" [@@untagged] [@@noalloc]
 
 (*
+ * Count ones in bitset.
+ *)
+external cnt : int -> int = "lm_cnt_byte" "lm_cnt" [@@untagged] [@@noalloc]
+
+(*
  * -*-
  * Local Variables:
  * Caml-master: "nl"
