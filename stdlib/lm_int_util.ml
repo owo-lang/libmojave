@@ -63,6 +63,16 @@ let log2 =
 external cnt : int -> int = "lm_cnt_byte" "lm_cnt" [@@untagged] [@@noalloc]
 
 (*
+ * Integer square root. Unfdefined if argument is negative.
+ *)
+external sqrt : int -> int = "lm_sqrt_byte" "lm_sqrt" [@@untagged] [@@noalloc]
+
+(*
+ * Rounding up to next power of 2, minimal 1
+ *)
+let clp2 n = Int.shift_left 1 (succ (log2 (pred n)))
+
+(*
  * -*-
  * Local Variables:
  * Caml-master: "nl"

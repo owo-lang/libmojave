@@ -45,6 +45,16 @@ external log2 : int -> int = "lm_ilog2_byte" "lm_ilog2" [@@untagged] [@@noalloc]
 external cnt : int -> int = "lm_cnt_byte" "lm_cnt" [@@untagged] [@@noalloc]
 
 (*
+ * Integer square root. Unfdefined if argument is negative.
+ *)
+external sqrt : int -> int = "lm_sqrt_byte" "lm_sqrt" [@@untagged] [@@noalloc]
+
+(*
+ * Rounding up to next power of 2, minimal 1
+ *)
+val clp2 : int -> int
+
+(*
  * -*-
  * Local Variables:
  * Caml-master: "nl"

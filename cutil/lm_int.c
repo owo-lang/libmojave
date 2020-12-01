@@ -104,6 +104,28 @@ static int cnt(unsigned long x)
 
 #endif /* is GCC compatible? */
 
+static int bit_width(unsigned long x)
+{
+    return x == 0 ? 1 : 1 + log2_64(x);
+}
+
+static long isqrt(unsigned long n)
+{
+    int shift = bit_width(n);
+    shift += shift & 1;
+
+    long result = 0;
+
+    do {
+        shift -= 2;
+        result <<= 1; // leftshift the result to make the next guess
+        result |= 1;  // guess that the next bit is 1
+        result ^= result * result > (n >> shift); // revert if guess too high
+    } while (shift != 0);
+
+    return result;
+}
+
 value lm_ilog2_byte(value i)
 {
     /* CAMLparam1(i); */
@@ -137,6 +159,16 @@ value lm_cnt_byte(value i)
   return Val_int(cnt(val));
 }
 
+value lm_sqrt_byte(value i)
+{
+  /* CAMLparam1(i); */
+  long int val;
+
+  val = Long_val(i);
+
+  return Val_long(isqrt(val));
+}
+
 intnat lm_ilog2(intnat i)
 {
     intnat res = -1;
@@ -155,4 +187,9 @@ intnat lm_ctz(intnat i)
 intnat lm_cnt(intnat i)
 {
     return cnt(i);
+}
+
+intnat lm_sqrt(intnat i)
+{
+    return isqrt(i);
 }
