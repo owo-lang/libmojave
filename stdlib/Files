@@ -22,6 +22,7 @@ STDLIB_FILES[] =
     lm_array_sig
     lm_large_array
     lm_large_array_weak
+    lm_stack
     lm_bitset
     lm_dag_sig
     lm_cycle_dag
