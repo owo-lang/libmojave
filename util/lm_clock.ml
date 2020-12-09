@@ -28,18 +28,11 @@
  *)
 
 open Lm_profile
+open Lm_string_set
 
 (*
  * We will keep track of all clocks by their names.
  *)
-module StringBase =
-struct
-   type t = string
-   let compare = compare
-end
-
-module StringSet = Lm_map.LmMake (StringBase)
-
 type clock_data_type =
    { clock_active : bool;
      clock_starttime : Unix.process_times;
@@ -47,13 +40,13 @@ type clock_data_type =
      clock_tcalls : int
    }
 
-let clock_add = StringSet.add
-let clock_find = StringSet.find
+let clock_add = StringTable.add
+let clock_find = StringTable.find
 
 (*
  * We store clocks here.
  *)
-let clocks = ref StringSet.empty
+let clocks = ref StringTable.empty
 
 (*
  * Start given clock.

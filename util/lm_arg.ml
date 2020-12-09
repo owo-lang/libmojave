@@ -121,20 +121,9 @@ exception UsageError
 (***  Option Table  ***)
 
 
-(* CharCompare, CharTable
+(* CharTable
    Defines a table indexed by individual characters.  *)
-module CharCompare = struct
-   type t = char
-   let compare (c1 : char) (c2 : char) =
-      if c1 < c2 then
-         -1
-      else if c1 > c2 then
-         1
-      else
-         0
-end (* CharCompare *)
-
-module CharTable = Lm_map.LmMake (CharCompare);;
+module CharTable = Lm_map.LmMake (Char)
 
 
 (* options

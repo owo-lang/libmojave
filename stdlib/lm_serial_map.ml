@@ -30,6 +30,7 @@
  *)
 open Lm_map_sig
 open Lm_map
+open Lm_int_set
 
 (*
  * These are the functions provided by the table.
@@ -60,12 +61,7 @@ end
  *)
 module SerialMapMake (Base : OrderedType) : SerialMap with type key = Base.t =
 struct
-   module IntModule = struct
-      type t = int
-      let compare = Stdlib.compare
-   end
-
-   module SMap = LmMake (IntModule)
+   module SMap = IntTable
    module SMapShadow = LmMake (Base)
 
    type key = Base.t

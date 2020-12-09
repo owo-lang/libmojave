@@ -36,6 +36,7 @@ open Lm_debug
 open Lm_trace
 open Lm_symbol
 open Lm_printf
+open Lm_int_set
 
 (*
  * Lm_debug flag.
@@ -48,14 +49,8 @@ let debug_loop = ref false
 type node_id = int
 type node_dfnum = int
 
-module IntCompare =
-struct
-   type t = int
-   let compare = Stdlib.compare
-end
-
-module NodeIdSet = Lm_set.LmMake (IntCompare)
-module NodeIdTable = Lm_map.LmMake (IntCompare)
+module NodeIdSet = IntSet
+module NodeIdTable = IntTable
 
 (*
  * A node has:

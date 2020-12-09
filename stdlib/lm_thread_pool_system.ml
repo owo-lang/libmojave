@@ -37,6 +37,7 @@
 open Lm_printf
 open Lm_debug
 open Lm_thread
+open Lm_int_set
 
 (*
 module Mutex     = MutexDebug
@@ -52,17 +53,6 @@ let debug_thread =
         debug_description = "Display thread debugging";
         debug_value = false
       }
-
-(*
- * Data structures.
- *)
-module IntCompare =
-struct
-   type t = int
-   let compare = (-)
-end
-
-module IntTable = Lm_map.LmMake (IntCompare)
 
 (*
  * Jobs are identified by descriptor.

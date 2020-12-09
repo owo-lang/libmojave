@@ -33,6 +33,7 @@ open Lm_hash
 open Lm_debug
 open Lm_printf
 open Lm_location
+open Lm_int_set
 
 let debug_lex =
    create_debug (**)
@@ -214,17 +215,8 @@ struct
             0
 end;;
 
-module DfaState = MakeHashCons (DfaStateArg);;
-module DfaStateTable = Lm_map.LmMake (DfaState);;
-
-module IntCompare =
-struct
-   type t = int
-   let compare = (-)
-end
-
-module IntSet   = Lm_set.LmMake (IntCompare);;
-module IntTable = Lm_map.LmMake (IntCompare);;
+module DfaState = MakeHashCons (DfaStateArg)
+module DfaStateTable = Lm_map.LmMake (DfaState)
 
 (*
  * A argument has two parts.
@@ -2699,13 +2691,7 @@ struct
    let pp_print_action = pp_print_int
 
    let hash i = i
-   let compare (i : int) (j : int) =
-      if i < j then
-         -1
-      else if i > j then
-         1
-      else
-         0
+   let compare = Int.compare
 
    let choose = min
 end

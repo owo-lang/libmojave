@@ -46,10 +46,10 @@ struct
 end
 
 module StringHash : HashMarshalSig with type elt = string =
-   MakeHashMarshal (StringCompare);;
+   MakeHashMarshal (StringCompare)
 
-module StringHashSet = Lm_set.LmMake (StringHash);;
-module StringHashTable = Lm_map.LmMake (StringHash);;
+module StringHashSet = Lm_set.LmMake (StringHash)
+module StringHashTable = Lm_map.LmMake (StringHash)
 
 let pp_print_string_hash buf s =
    pp_print_string buf (StringHash.get s)

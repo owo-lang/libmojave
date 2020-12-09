@@ -32,6 +32,8 @@
  *)
 open Lm_debug
 open Lm_printf
+open Lm_int_set
+open Lm_string_set
 
 let debug_notify =
    create_debug {
@@ -39,24 +41,6 @@ let debug_notify =
       debug_description = "Print the information on FAM events.";
       debug_value = false
    }
-
-(*
- * Tables.
- *)
-module IntCompare =
-struct
-   type t = int
-   let compare = (-)
-end
-
-module StringCompare =
-struct
-   type t = string
-   let compare = Stdlib.compare
-end
-
-module IntTable = Lm_map.LmMake (IntCompare)
-module StringTable = Lm_map.LmMake (StringCompare)
 
 (*
  * The state of the notifier.
