@@ -29,18 +29,6 @@
  *)
 
 (*
- * Convert to an association list.
- * Order is random, but the is only one entry
- * for each key.
- *)
-val to_list : ('a, 'b) Hashtbl.t -> ('a * 'b) list
-
-(*
- * Add a list to a hashtbl.
- *)
-val add_list : ('a, 'b) Hashtbl.t -> ('a * 'b) list -> unit
-
-(*
  * Add all the entries from the second table.
  * The original entries are removed.
  *)

@@ -29,24 +29,6 @@
  *)
 
 (*
- * Convert to an association list.
- * Order is random, but the is only one entry
- * for each key.
- *)
-let to_list tbl =
-   let l = ref [] in
-      Hashtbl.iter (fun key value ->
-            if not (List.mem_assoc key !l) then
-               l := (key, value) :: !l) tbl;
-      !l
-
-(*
- * Add a list to a hashtbl.
- *)
-let add_list tbl l =
-   List.iter (fun (key, value) -> Hashtbl.add tbl key value) l
-
-(*
  * Add all the entries from the second table.
  * The original entries are removed.
  *)
