@@ -27,7 +27,7 @@
  * Author: LdBeth
  * ldbeth@sdf.org
  *)
-open Lm_bitset
+(* open Lm_bitset *)
 
 (* The dictionary is a minimized graph represented as a compacted bitset,
  * with an array of hashtables for transition. The new added words are not
@@ -75,78 +75,100 @@ let check d w =
                if n < b then
                   aux stn (succ n)
                else
-                  Lm_bitset.get d.states
+                  Lm_bitset.get d.states n
           | Some _ -> is_in_extra d.extra w
           | None -> false
    in aux 0 0
 
-
-let init () : unit -> automaton =
-   { paths = Array.init 254 (fun _ -> Hashtbl.create 587); top = 0 }
-
-let root = 0
-
-
-val next : state * graph -> char -> state * bool
-
 (* automaton *)
 type a =
-   { states : (int, (char * int) list) Hashtbl.t ;
-     final : (int, unit) Hashtbl.t;
-     reg : (int, unit) Hashtbl.t;
-     mutable count : int
-   }
+   Node of (char * a ref) list
+ | End of (char * a ref) list
+(* | Root of a ref option array *)
 
-let init_aut = { states = Hashtbl.create 7213;
-                 final = Hashtbl.create 127;
-                 reg = Hashtbl.create 127;
-                 count = 0
-               }
+type state = a ref
 
-let aut_to_dict { states = s; final = f; count = i; _ } =
-   let p = Array.init 254 (fun _ -> Hashtbl.create 587) in
-   let b = Lm_bitset.create count in
-   let set a _ = Lm_bitset.set b a in
-   let path a b = List.map (fun (c, n) -> Hashtbl.add (Array.get p (Char.code x)) a n) b
-   in Hashtbl.iter set f;
-      Hashtbl.iter path s;
-      { paths = p; states = b; size = succ i; extra = Hashtbl.make 13 }
+let zero = ref (Node [])
 
-let add_to_final a n =
-   Hashtbl.add a.final n ()
+let theta state char =
+   match !state with
+      Node a
+    | End a -> List.assoc_opt char a
 
-let is_final a n =
-   Hashtbl.mem a.final n
-
-let add_to_reg a n =
-   Hashtbl.add a.reg n ()
-
-let is_in_reg a n =
-   Hashtbl.mem a.reg n
-
-let hash_children_last a st =
-   match Hashtbl.find a.states st with
-      [] -> None
-    | a :: _ -> Some a
-
-let find_common { states = s; _ } w =
+let thetas state w =
    let b = String.length w in
-   let rec aux n =
-      match List.assoc_opt
-      match match_state st n with
-         Some (stn, true)
-            string_cut (succ n), stn
-       | Some (stn, false) ->
-            if succ n >= b then
-               string_cut (succ n) stn
-            else aux stn (succ n)
-       | None ->
-            string_cut n, st
-   in aux 0 0
+   let rec aux s n =
+      if n == b then s, n else
+         match theta s w.[n] with
+            Some s -> aux s (succ n)
+          | None -> s, n in
+   let s, st = aux state 0 in
+   s, String.sub w st (b-st)
 
-let add_file =
+let has_children s =
+   match !s with
+      Node []
+    | End [] -> false
+    | _ -> true
+
+let last_child s =
+   match !s with
+      Node l
+    | End l -> List.hd l
+
+let form_suffix sf l =
+   match String.length sf with
+      0 -> l
+    | 1 -> (sf.[0], ref (End [])) :: l
+    | x -> let rec aux n a =
+              if n < 0 then a
+              else aux (pred n) (sf.[n], ref (Node [a]))
+           in (aux (x - 1) (sf.[0], ref (End []))) :: l
+
+let equal_node a b =
+   let sort = List.sort (fun a b -> compare (fst a) (fst b)) in
+   let st_eq a b =
+      (List.length a = List.length b)
+      && List.for_all2
+      (fun (a1, a2) (b1, b2) -> a1 = b1 && a2 == b2)
+      (sort a) (sort b) in
+      match a, b with
+         Node a, Node b
+       | End a, End b -> st_eq a b
+       | _ -> false
+
+let add_file zero filename =
    let register = ref [] in
+   let rec replace_or_register (s : state) =
+      let _, cs = last_child s in
+         if has_children cs then
+            replace_or_register cs;
+         match List.find_opt (fun x -> equal_node x !cs) !register with
+            Some q -> cs := q
+          | None -> register := !cs :: !register in
    let add_word w =
-      let (prefix, suffix), ls = find_common paths w in
+      let ls, sf = thetas zero w in
+         if has_children ls then replace_or_register ls;
+         let sfx = form_suffix sf in
+            ls := match !ls with
+                     Node l -> Node (sfx l)
+                   | End l -> End (sfx l)
+   in
+      try
+         let inx = open_in filename in
+         let count = ref 0 in
+            try
+               while true do
+                  if !count > 100 then
+                     (Lm_printf.eprintf "*"; count := 0);
+                  add_word (input_line inx);
+                  incr count;
+               done
+            with
+               End_of_file -> close_in inx
+             | x -> close_in inx;
+                    raise x
+      with
+         Sys_error _ -> ()
 
 (* foo *)

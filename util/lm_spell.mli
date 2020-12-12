@@ -29,7 +29,11 @@
  *)
 
 type dict
+type state
 
 val check : dict -> string -> bool
-val add : dict -> string -> unit
-val add_file : dict -> channel -> unit
+val add_word : dict -> string -> unit
+
+val zero : state
+val thetas : state -> string -> state * string
+val add_file : state -> string -> unit
