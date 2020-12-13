@@ -107,18 +107,6 @@ let rec remove_nth i l =
          raise (Failure "Lm_list_util.remove_nth")
 
 (*
- * Work left-to-right, but reverse the result.
- *)
-let rec rev_map' f l = function
-   h :: t ->
-      rev_map' f (f h :: l) t
- | [] ->
-      l
-
-let rev_map f l =
-   rev_map' f [] l
-
-(*
  * Reverse do_list.
  *)
 let rec rev_iter f = function
@@ -178,22 +166,10 @@ let rec some_map_aux unchanged f = function
          raise Unchanged;
       []
 
-let some_map_safe f l =
+let filter_map_safe f l =
    try some_map_aux true f l with
       Unchanged ->
          l
-
-let rec some_map f = function
-   h :: t ->
-      begin
-         match f h with
-            Some h' ->
-               h' :: some_map f t
-          | None ->
-               some_map f t
-      end
- | [] ->
-      []
 
 (*
  * Cross between map and fold_left.

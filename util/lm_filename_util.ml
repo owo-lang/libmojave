@@ -485,7 +485,7 @@ let where name =
    in
    let path = Lm_string_util.split search_separator_string path in
    let find dir = is_executable (Filename.concat dir name) in
-      Lm_list_util.some_map find path
+      List.filter_map find path
 
 (*
  * Make a directory hierarchy.
