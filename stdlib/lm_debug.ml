@@ -291,31 +291,10 @@ let show_loading s =
       eprintf s eflush
 
 (*
- * Split a string at a particular char.
- *)
-let split c s =
-   let len = String.length s in
-   let rec loop i j =
-      if j = len then
-         if i = j then
-            []
-         else
-            [String.sub s i (j - i)]
-      else if String.contains c s.[j] then
-         if i = j then
-            loop (succ j) (succ j)
-         else
-            (String.sub s i (j - i)) :: (loop (succ j) (succ j))
-      else
-         loop i (succ j)
-   in
-      loop 0 0
-
-(*
  * Set debug flags from the environment.
  *)
 let set_debug_flags flags =
-   let names = split ":" flags in
+   let names = String.split_on_char ':' flags in
       try List.iter (fun name -> set_debug name true) names with
          Failure _ ->
             debug_usage ();

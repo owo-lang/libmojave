@@ -22,7 +22,6 @@
    LICENSE.libmojave for more details.
  *)
 open Lm_format_util
-open Lm_string_util
 open Format
 
 (***  Command Processing (Extract Commands)  ***)
@@ -290,7 +289,7 @@ let read_eval_print run =
    let command, _ = get_next_argument (parse_command input) in
    let command_len = String.length command in
    let arguments = String.sub input command_len (String.length input - command_len) in
-   let arguments = Lm_string_util.trim arguments in
+   let arguments = String.trim arguments in
    let arguments = arg_filter arguments in
    let rec find_and_dispatch = function
       (command', call, _) :: commands ->
@@ -403,7 +402,7 @@ let int_yes_no_cancel appname hack_title prompt default cancel_ok =
          let () = printf "%s?@." prompt in
          let prompt = sprintf "%s (default %s)? " prompt' default_name in
          let input = Lm_readline.readline (bold_text prompt) in
-            match trim input with
+            match String.trim input with
                "y" | "yes" ->
                   Some true
              | "n" | "no" ->

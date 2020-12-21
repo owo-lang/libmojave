@@ -243,7 +243,7 @@ let flags_get_int flags flag =
  * set accordingly.
  *)
 let flags_set_expr flags exprs =
-   let exprs = Lm_string_util.split "," exprs in
+   let exprs = String.split_on_char ',' exprs in
    let process_expr flags expr =
       try
          let equals = String.index expr '=' in

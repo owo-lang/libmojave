@@ -58,11 +58,6 @@ val unhexify : string -> string
 val unhexify_int : string -> int
 
 (*
- * Find a char in a string.
- *)
-val strchr : string -> char -> int
-
-(*
  * Membership.
  *    contains s c : true iff c appears in s
  *    contains_string s1 s2 : true iff any char in s2 appears in s1
@@ -244,11 +239,6 @@ val prepend : string -> string list -> string
  * the first match found; on failure, this raises Not_found.
  *)
 val strpat : string -> int -> int -> string -> int
-
-(*
- * Trim whitespace at outer boundaries from a string.
- *)
-val trim : string -> string
 
 (*
  * Trim all consecutive whitespace from a string, respecting

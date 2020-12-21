@@ -45,14 +45,10 @@ module StringMTable = Lm_map.LmMakeList (OrderedString)
 (*
  * String sets and string tables with lexicographical ordering.
  *)
-module LexOrderedString = struct
-   type t = string
-   let compare (s1: t) s2 = Stdlib.compare s1 s2
-end
 
-module LexStringSet = Lm_set.LmMake (LexOrderedString)
-module LexStringTable = Lm_map.LmMake (LexOrderedString)
-module LexStringMTable = Lm_map.LmMakeList (LexOrderedString)
+module LexStringSet = Lm_set.LmMake (String)
+module LexStringTable = Lm_map.LmMake (String)
+module LexStringMTable = Lm_map.LmMakeList (String)
 
 (*!
  * @docoff

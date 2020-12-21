@@ -31,7 +31,6 @@ UTIL_FILES[] =
     lm_termsize
     lm_arg
     lm_ssl
-    lm_config
     lm_channel
     lm_hash_sig
     lm_hash

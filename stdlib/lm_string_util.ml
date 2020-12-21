@@ -105,22 +105,6 @@ let for_all f s =
       check 0
 
 (*
- * Find a char in a string.
- *)
-let strchr s c =
-   let l = String.length s in
-   let rec aux i =
-      if i < l then
-         if s.[i] = c then
-            i
-         else
-            aux (succ i)
-      else
-         raise Not_found
-   in
-      aux 0
-
-(*
  * A more efficient reimplementation of String.contains.
  *)
 let contains =
@@ -153,7 +137,7 @@ let index_set s set =
          raise Not_found
       else
          let c = s.[i] in
-            if String.contains set c then
+            if contains set c then
                i
             else
                loop (succ i)
@@ -166,7 +150,7 @@ let rindex_set s set =
          raise Not_found
       else
          let c = s.[i] in
-            if String.contains set c then
+            if contains set c then
                i
             else
                loop (i - 1)
@@ -1034,31 +1018,6 @@ let trim_all quotes delims str =
       Buffer.contents scratch_buf
 
 let trim_std = trim_all quotes white
-
-(*
- * Trim outer whitespace from a string.
- *)
-let trim s =
-   let length = String.length s in
-   let is_whitespace = String.contains white in
-   let rec scan_for_first_nonws index =
-      if index < length && is_whitespace s.[index] then
-         scan_for_first_nonws (index + 1)
-      else
-         index
-   in
-   let rec scan_for_last_nonws index =
-      if index >= 0 && is_whitespace s.[index] then
-         scan_for_last_nonws (index - 1)
-      else
-         index
-   in
-   let first = scan_for_first_nonws 0 in
-   let last  = scan_for_last_nonws (length - 1) in
-      if first > last then
-         ""
-      else
-         String.sub s first (last - first + 1)
 
 (*
  * Turn a string into an argument list.
