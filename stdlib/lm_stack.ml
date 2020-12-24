@@ -52,14 +52,14 @@ let get s n =
    then Array.get s.old n
    else if n < s.j
    then Array.get s.cur n
-   else raise (invalid_arg "Lm_stack.get: out of bound")
+   else invalid_arg "Lm_stack.get: out of bound"
 
 let set s n e =
    if n < s.i
    then Array.set s.old n e
    else if n < s.j
    then Array.set s.cur n e
-   else raise (invalid_arg "Lm_stack.get: out of bound")
+   else invalid_arg "Lm_stack.get: out of bound"
 
 let push stack e =
    let { cur = ca; size = s;

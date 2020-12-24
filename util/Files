@@ -23,6 +23,7 @@ UTIL_FILES[] =
     lm_position
     lm_attribute
     lm_readline
+    lm_sgr
     lm_terminfo
     lm_ncurses
     lm_ncurses_display

@@ -603,6 +603,12 @@ external display_width : string -> int = "display_width_of_string"
 let format_raw_string buf s =
    push_command buf (Text (display_width s, s))
 
+(*
+ * Format the escape sequence to terminal.
+ *)
+let format_sgr_string buf s =
+   push_command buf (Text (0, s))
+
 let format_cbreak buf str str' =
    let l = String.length str in
    let l' = String.length str' in

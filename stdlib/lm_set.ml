@@ -1025,7 +1025,7 @@ struct
       if n = 1 then
          match l with
             x :: l -> Red (x, Leaf, Leaf, 1), l
-          | _ -> raise (invalid_arg "treeify")
+          | _ -> invalid_arg "treeify"
       else
          let h = n lsr 1 in
          let f = if n mod 2 = 0 then
@@ -1036,7 +1036,7 @@ struct
             match treeify_f h l with
                (left, x :: l) -> let right, l' = f h l
                                  in new_black x left right, l'
-             | _ -> raise (invalid_arg "treeify")
+             | _ -> invalid_arg "treeify"
 
    and treeify_g n l =
       if n = 1 then
@@ -1051,7 +1051,7 @@ struct
             match f h l with
                (left, x :: l) -> let right, l' = treeify_g h l
                                  in new_black x left right, l'
-             | _ -> raise (invalid_arg "treeify")
+             | _ -> invalid_arg "treeify"
 
    (*
     * Build a tree directly from ordered list,

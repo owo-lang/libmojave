@@ -26,11 +26,11 @@ CFILES[] =
     lm_float
     lm_int
     lm_ranhash
+    lm_terminfo
     lm_ncurses
     lm_rformat
     lm_readline
     lm_rusage
-    lm_terminfo
     lm_mmap
     lm_marshal_shared
     lm_ssl
