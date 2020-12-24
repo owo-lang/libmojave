@@ -27,11 +27,9 @@ type rendition
 
 val new_rend : unit -> rendition
 
-val bf : param
 val bb : param
 val tt : param
 val it : param
-val em : param
 val rm : param
 val sm : param
 val ul : param

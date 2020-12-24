@@ -48,21 +48,21 @@ let bold = 1 (* 1 *)
 let dim = 2 (* 2 *)
 let italic = 4 (* 3 *)
 let underline = 8 (* 4 *)
-let blink = 16 (* 5 *)
-let inverse = 32 (* 7 *)
+(*
+let blink = 16
+let inverse = 32
+*)
 
-let only x = x, lnot x
+(* let only x = x, lnot x *)
 let on x = x, 0
 let off x = 0, x
 
 (* XXX: HACK: These features may not supported by
  * a particular terminal type.
  *)
-let bf = only bold
 let bb = on bold
 let tt = off (italic + bold + dim)
-let it = only italic
-let em = on italic
+let it = on italic
 let rm = off 63
 let sm = on dim
 let ul = on underline
@@ -73,31 +73,43 @@ let ul = on underline
 
   let sgr0 = "\027[m" *)
 
-let get i f = i land f <> 0
+let code = [| '1' ; '2' ; '3'; '4' ; '5' ; '7' |]
 
 let sgr i =
-   "\027[0"
-   ^ (if (get i bold) then ";1" else "")
-   ^ (if (get i dim) then ";2" else "")
-   ^ (if (get i italic) then ";3" else "")
-   ^ (if (get i underline) then ";4" else "")
-   ^ (if (get i blink) then ";5" else "")
-   ^ (if (get i inverse) then ";7" else "")
-   ^ "m"
+   let b = Buffer.create 19 in
+   let rec aux i =
+      if i > 0 then
+      begin
+         Buffer.add_char b (Array.get code (Lm_int_util.ctz i));
+         aux (i land (i - 1)) (* rightmost bit off *)
+      end
+   in
+      Buffer.add_string b "\027[0";
+      aux i;
+      Buffer.add_char b 'm';
+      Buffer.contents b
 
+(*    ^ (if (get i bold) then ";1" else "")
+      ^ (if (get i dim) then ";2" else "")
+      ^ (if (get i italic) then ";3" else "")
+      ^ (if (get i underline) then ";4" else "")
+      ^ (if (get i blink) then ";5" else "")
+      ^ (if (get i inverse) then ";7" else "")
+      ^ "m"
+*)
 (* TODO: add TERM detection *)
 
 let push p ({ cache = cache; old = old } as r) =
    r.old <- cache :: old;
    let nv = add p cache in
       r.cache <- nv;
-      Some (sgr nv)
+      if cache == nv then None else Some (sgr nv)
 
 let pop ({ cache = cache; old = old } as r) =
    match old with
       a :: b -> r.cache <- a;
                 r.old <- b;
-                Some (sgr a)
+                if a == cache then None else Some (sgr a)
     | _ -> invalid_arg "Lm_sgr.pop: underflow"
 
 

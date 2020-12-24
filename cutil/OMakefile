@@ -4,16 +4,7 @@
 OMakeVersion(0.9.8)
 
 open configure/snprintf
-open configure/ncurses
 open configure/fs_case_sensitive
-
-if $(and $(LM_STANDALONE), $(NCURSES_AVAILABLE))
-    CFLAGS += -DNCURSES
-    export
-
-if $(NCURSES_TERMH_IN_NCURSES)
-    CFLAGS += -DTERMH_IN_NCURSES
-    export
 
 if $(DETECT_FS_CASE_SENSITIVE)
     CFLAGS += $(DETECT_FS_CASE_SENSITIVE_CFLAGS)
@@ -26,8 +17,6 @@ CFILES[] =
     lm_float
     lm_int
     lm_ranhash
-    lm_terminfo
-    lm_ncurses
     lm_rformat
     lm_readline
     lm_rusage
