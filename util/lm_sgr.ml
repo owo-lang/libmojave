@@ -36,12 +36,6 @@ let new_rend () = { cache = 0; old = [] }
 let add (a, b) n = (lnot b) land (a lor n)
 
 (*
-let diff a b =
-   let xor = a lxor b in
-      a land xor, b land xor
-      *)
-
-(*
  * Font toggles
  *)
 let bold = 1 (* 1 *)
@@ -49,8 +43,9 @@ let dim = 2 (* 2 *)
 let italic = 4 (* 3 *)
 let underline = 8 (* 4 *)
 (*
-let blink = 16
-let inverse = 32
+let blink = 16 ;; 5
+let inverse = 32 ;; 7
+let rm = 64
 *)
 
 (* let only x = x, lnot x *)
@@ -67,12 +62,6 @@ let rm = off 63
 let sm = on dim
 let ul = on underline
 
-(* let sgr l =
-   let args = String.concat ";" (List.map Int.to_string l) in
-   "\027[" ^ args ^"m"
-
-  let sgr0 = "\027[m" *)
-
 let code = [| '1' ; '2' ; '3'; '4' ; '5' ; '7' |]
 
 let sgr i =
@@ -80,6 +69,7 @@ let sgr i =
    let rec aux i =
       if i > 0 then
       begin
+         Buffer.add_char b ';';
          Buffer.add_char b (Array.get code (Lm_int_util.ctz i));
          aux (i land (i - 1)) (* rightmost bit off *)
       end
@@ -96,21 +86,38 @@ let sgr i =
       ^ (if (get i blink) then ";5" else "")
       ^ (if (get i inverse) then ";7" else "")
       ^ "m"
-*)
+ *)
+
+let sgr' i = Printf.sprintf "\027[%cm" (Array.get code (Lm_int_util.ctz i))
+
 (* TODO: add TERM detection *)
 
 let push p ({ cache = cache; old = old } as r) =
    r.old <- cache :: old;
    let nv = add p cache in
       r.cache <- nv;
-      if cache == nv then None else Some (sgr nv)
+      if cache == nv
+      then None
+      else Some (if nv == (nv lor cache)
+                 then sgr' (nv - cache)
+                 else sgr nv)
 
 let pop ({ cache = cache; old = old } as r) =
    match old with
       a :: b -> r.cache <- a;
                 r.old <- b;
-                if a == cache then None else Some (sgr a)
+                if a == cache
+                then None
+                else Some (sgr a)
     | _ -> invalid_arg "Lm_sgr.pop: underflow"
 
+let bold_text t = Printf.sprintf "\027[0;1m%s\027[0m" t
 
-(*  f oo *)
+let xterm_title t = Printf.sprintf "\027]0;%s\007" t
+
+(*
+ * -*-
+ * Local Variables:
+ * End:
+ * -*-
+ *)

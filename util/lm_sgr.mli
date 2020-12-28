@@ -37,4 +37,12 @@ val ul : param
 val push : param -> rendition -> string option
 val pop : rendition -> string option
 
-(* foo *)
+val bold_text : string -> string
+val xterm_title : string -> string
+
+(*
+ * -*-
+ * Local Variables:
+ * End:
+ * -*-
+ *)

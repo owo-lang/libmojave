@@ -72,31 +72,11 @@ let reconstruct_arguments args =
 
 (***  Prompt Formatting and Display Properties  ***)
 
-
-(* tcap_set_bold
-   tcap_clear_attr
-   Get terminal capabilities for formatting text.  *)
-let tcap_set_bold   = Lm_terminfo.tgetstr Lm_terminfo.enter_bold_mode
-let tcap_clear_attr = Lm_terminfo.tgetstr Lm_terminfo.exit_attribute_mode
-
-
-(* xterm_escape_begin
-   xterm_escape_end
-   XTerm escape sequences for setting and clearing the title text.  *)
-let xterm_escape_begin = Lm_terminfo.xterm_escape_begin ()
-let xterm_escape_end   = Lm_terminfo.xterm_escape_end ()
-
-
 (* bold_text text
    Makes the indicated text bold. If no termcap support was available, this
    returns the original prompt, unaltered. This is used primarily for prompt
    formatting.  *)
-let bold_text text =
-   match tcap_set_bold, tcap_clear_attr with
-      Some set, Some clr ->
-         set ^ text ^ clr
-    | _ ->
-         text
+let bold_text = Lm_sgr.bold_text
 
 
 (* title_text appname text
@@ -105,14 +85,10 @@ let bold_text text =
    NOT format the text to display anything to the console itself, under
    any circumstance.  This may prepend the application name to the text. *)
 let title_text appname text =
-   match xterm_escape_begin, xterm_escape_end with
-      Some set, Some clr ->
-         if text = "" then
-            set ^ appname ^ clr
-         else
-            set ^ appname ^ ":  " ^ text ^ clr
-    | _ ->
-         ""
+   if text = "" then
+      xterm_title appname
+   else
+      xterm_title (appname ^ ":  " ^ text)
 
 
 (***  Read-Eval-Print Lm_loop  ***)

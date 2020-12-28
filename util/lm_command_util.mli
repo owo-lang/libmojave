@@ -42,21 +42,6 @@ val reconstruct_arguments : string list -> string
 
 (***  Prompt Formatting and Display Properties  ***)
 
-
-(* tcap_set_bold
-   tcap_clear_attr
-   Get terminal capabilities for formatting text.  *)
-val tcap_set_bold : string option
-val tcap_clear_attr : string option
-
-
-(* xterm_escape_begin
-   xterm_escape_end
-   XTerm escape sequences for setting and clearing the title text.  *)
-val xterm_escape_begin : string option
-val xterm_escape_end : string option
-
-
 (* bold_text text
    Makes the indicated text bold. If no termcap support was available, this
    returns the original prompt, unaltered. This is used primarily for prompt

@@ -64,8 +64,8 @@ external serve          : int -> string -> string -> t       = "lm_ssl_serve"
 (*
  * Private functions.
  *)
-external lm_ssl_enabled  : unit -> bool                       = "lm_ssl_enabled" [@@noalloc]
-external lm_ssl_init     : unit -> unit                       = "lm_ssl_init" [@@noalloc]
+external lm_ssl_enabled  : unit -> bool                       = "lm_ssl_enabled"
+external lm_ssl_init     : unit -> unit                       = "lm_ssl_init"
 external lm_ssl_read     : t -> bytes -> int -> int -> int    = "lm_ssl_read"
 external lm_ssl_write    : t -> bytes -> int -> int -> int    = "lm_ssl_write"
 external lm_ssl_flush    : t -> unit                          = "lm_ssl_flush"
