@@ -62,9 +62,8 @@ struct
       let l1 = length a1 and l2 = length a2 in
       if l1 = 0 && l2 = 0 then [|e|] else begin
          let r = create (succ l1 + l2) e in
-         for i = 0 to l1 - 1 do Array.unsafe_set r i (Array.unsafe_get a1 i) done;
-         let l1 = succ l1 in
-         for i = 0 to l2 - 1 do Array.unsafe_set r (i + l1) (Array.unsafe_get a2 i) done;
+         Array.blit a1 0 r 0 l1;
+         Array.blit a2 0 r (succ l1) l2;
          r
       end
 
@@ -86,17 +85,7 @@ struct
    let init = Array.init
    let collect = Lm_array_util.collect
 
-   let for_all f a =
-      let len = Array.length a in
-      let rec search i =
-         i = len || (f (Array.unsafe_get a i) && search (succ i))
-      in
-         search 0
+   let for_all = Array.for_all
 
-   let exists f a =
-      let len = Array.length a in
-      let rec search i =
-         i < len && (f (Array.unsafe_get a i) || search (succ i))
-      in
-         search 0
+   let exists = Array.exists
 end
