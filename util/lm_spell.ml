@@ -28,6 +28,7 @@
  * ldbeth@sdf.org
  *)
 (* open Lm_bitset *)
+(* open Lm_printf *)
 
 (* The dictionary is a minimized graph represented as a compacted bitset,
  * with an array of hashtables for transition. The new added words are not
@@ -80,95 +81,90 @@ let check d w =
           | None -> false
    in aux 0 0
 
-(* automaton *)
-type a =
-   Node of (char * a ref) list
- | End of (char * a ref) list
-(* | Root of a ref option array *)
+(*******
+ * Build the acylic graph
+ *
+ *)
+type node = { char : char; mutable next : state }
 
-type state = a ref
+and state = { term : bool; mutable children : node list }
 
-let zero = ref (Node [])
+let has_children = function
+   { children = [] ; _ } -> false
+ | _ -> true
+
+let last_child s = List.hd s.children
 
 let theta state char =
-   match !state with
-      Node a
-    | End a -> List.assoc_opt char a
+   match (List.find_opt (fun n -> n.char = char) state.children) with
+      Some n -> Some n.next
+    | None -> None
 
-let thetas state w =
+let thetas s w =
    let b = String.length w in
-   let rec aux s n =
-      if n == b then s, n else
-         match theta s w.[n] with
-            Some s -> aux s (succ n)
-          | None -> s, n in
-   let s, st = aux state 0 in
-   s, String.sub w st (b-st)
+   let rec aux st n =
+      if n = b then st, b else
+         match theta st w.[n] with
+            Some st -> aux st (succ n)
+          | None -> st, n in
+   let st, n = aux s 0 in
+   let res = String.sub w n (b - n) (* drop n chars *)
+   in st, res
 
-let has_children s =
-   match !s with
-      Node []
-    | End [] -> false
-    | _ -> true
+let form_suffix sfx =
+   let len = String.length sfx in
+   let last = { char = sfx.[len - 1] ; next = { term = true; children = [] } } in
+   let rec aux n a =
+      if n < 0 then a
+      else aux (pred n) { char = sfx.[n];
+                          next = { term = false; children = [a] } }
+   in aux (len - 2) last
 
-let last_child s =
-   match !s with
-      Node l
-    | End l -> List.hd l
+let add_suffix last sfx =
+   last.children <- (form_suffix sfx) :: last.children
 
-let form_suffix sf l =
-   match String.length sf with
-      0 -> l
-    | 1 -> (sf.[0], ref (End [])) :: l
-    | x -> let rec aux n a =
-              if n < 0 then a
-              else aux (pred n) (sf.[n], ref (Node [a]))
-           in (aux (x - 1) (sf.[0], ref (End []))) :: l
+module ChildrenHash =
+struct
+   type t = node list
+   (* XXX: This assumes all words added are sorted *)
+   let equal = Lm_list_util.for_all2 (fun a b -> a.char = b.char && a.next == b.next)
 
-let equal_node a b =
-   let sort = List.sort (fun a b -> compare (fst a) (fst b)) in
-   let st_eq a b =
-      (List.length a = List.length b)
-      && List.for_all2
-      (fun (a1, a2) (b1, b2) -> a1 = b1 && a2 == b2)
-      (sort a) (sort b) in
-      match a, b with
-         Node a, Node b
-       | End a, End b -> st_eq a b
-       | _ -> false
+   let hash = List.fold_left (fun a (b : node) -> a lxor Hashtbl.hash b) 0
 
-let add_file zero filename =
-   let register = ref [] in
-   let rec replace_or_register (s : state) =
-      let _, cs = last_child s in
-         if has_children cs then
-            replace_or_register cs;
-         match List.find_opt (fun x -> equal_node x !cs) !register with
-            Some q -> cs := q
-          | None -> register := !cs :: !register in
+end
+
+module Register = Hashtbl.Make(ChildrenHash)
+
+let build_from_file filename =
+   let register_a, register_b = Register.create 30000, Register.create 150000 in
+   let select b = if b then register_a else register_b in
+   let find_in_register n = Register.find_opt (select n.term) n.children in
+   let register n = Register.add (select n.term) n.children n in
+   let rec replace_or_register s =
+      let { next = next; _ } as child = last_child s in
+         if has_children next then replace_or_register next;
+         match find_in_register next with
+            Some q -> child.next <- q
+          | None -> register next in
+   let root = { term = false ; children = [] } in
    let add_word w =
-      let ls, sf = thetas zero w in
-         if has_children ls then replace_or_register ls;
-         let sfx = form_suffix sf in
-            ls := match !ls with
-                     Node l -> Node (sfx l)
-                   | End l -> End (sfx l)
+      let last_state, current_suffix = thetas root w in
+         if has_children last_state then
+            replace_or_register last_state;
+         add_suffix last_state current_suffix
    in
+   let inx = open_in filename in
+   begin
       try
-         let inx = open_in filename in
-         let count = ref 0 in
-            try
-               while true do
-                  if !count > 100 then
-                     (Lm_printf.eprintf "*"; count := 0);
-                  add_word (input_line inx);
-                  incr count;
-               done
-            with
-               End_of_file -> close_in inx
-             | x -> close_in inx;
-                    raise x
+         while true do
+            add_word (input_line inx)
+         done
       with
-         Sys_error _ -> ()
+         End_of_file -> close_in inx
+       | x -> close_in inx;
+              raise x
+   end;
+   replace_or_register root;
+   root, 1 + Register.length register_a + Register.length register_b
 
 (* foo *)

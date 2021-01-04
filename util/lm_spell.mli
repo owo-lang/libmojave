@@ -34,6 +34,6 @@ type state
 val check : dict -> string -> bool
 val add_word : dict -> string -> unit
 
-val zero : state
-val thetas : state -> string -> state * string
-val add_file : state -> string -> unit
+val test : state -> string -> bool
+(* val thetas : state -> string -> state * string *)
+val add_file : string -> state

@@ -424,26 +424,8 @@ let rec subtract_list l1 l2 =
          []
 
 (*
- * map2to1
+ * fold_left + map = fold_map, named as fold_left_map in Stdlib
  *)
-let rec map2to1 f l1 l2 =
-  match l1, l2 with
-      [], [] -> []
-    | h1::l1, h2::l2 ->
-	f h1 h2 :: map2to1 f l1 l2
-    | _ -> raise (Invalid_argument "map2to1")
-
-(*
- * fold_left + map = fold_map
- *)
-let rec fold_map f i l =
-  match l with
-      [] -> i, []
-    | hd :: tl ->
-	let i, hd = f i hd in
-	let i, l = fold_map f i tl in
-	  i, hd :: l
-
 let rec fold_map2to1 f i l1 l2 =
   match l1, l2 with
       [], [] -> i, []
