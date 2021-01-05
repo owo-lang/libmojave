@@ -34,6 +34,8 @@ type state
 val check : dict -> string -> bool
 val add_word : dict -> string -> unit
 
-val test : state -> string -> bool
+(* val test : state -> string -> bool *)
 (* val thetas : state -> string -> state * string *)
-val add_file : string -> state
+val make_dict : string -> dict
+val to_channel : out_channel -> dict -> unit
+val from_channel : in_channel -> dict

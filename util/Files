@@ -11,6 +11,7 @@ UTIL_FILES[] =
     lm_loop
     lm_bitmatrix
     lm_symbol_matrix
+    lm_spell
     lm_float80
     lm_rawfloat
     lm_profile
