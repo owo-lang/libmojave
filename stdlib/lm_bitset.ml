@@ -39,6 +39,8 @@ type t = int array
 let create len =
    Array.make ((len + int_size - 1) / int_size) 0
 
+let copy = Array.copy
+
 let set bits i =
    let index = i / int_size in
    let bit = i mod int_size in
@@ -61,6 +63,16 @@ let union a b =
                   else blen, Array.copy b in
       for i = 0 to sl-1 do
          bits.(i) <- a.(i) lor b.(i)
+      done;
+      bits
+
+let inter a b =
+   let l_a, l_b = Array.length a, Array.length b in
+   let max_s = max l_a l_b in
+   let sl = min l_a l_b in
+   let bits = Array.make max_s 0 in
+      for i = 0 to sl-1 do
+         bits.(i) <- a.(i) land b.(i)
       done;
       bits
 
