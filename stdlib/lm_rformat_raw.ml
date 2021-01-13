@@ -45,25 +45,17 @@ type raw_printer =
  * Basic raw printers.
  *)
 let raw_channel_printer out =
-   { raw_print_string  = (fun s off len -> output out (Bytes.of_string s) off len);
+   { raw_print_string  = output_substring out;
      raw_print_flush   = (fun () -> flush out);
      raw_print_newline = (fun () -> output_char out '\n');
-     raw_print_spaces  =
-        (fun i ->
-              for _ = 0 to pred i do
-                 output_char out ' '
-              done)
+     raw_print_spaces  = (fun i -> output_string out (String.make i ' '))
    }
 
 let raw_buffer_printer buf =
    { raw_print_string   = Buffer.add_substring buf;
      raw_print_flush    = (fun () -> ());
      raw_print_newline  = (fun () -> Buffer.add_char buf '\n');
-     raw_print_spaces   =
-        (fun i ->
-              for _ = 0 to pred i do
-                 Buffer.add_char buf ' '
-              done)
+     raw_print_spaces   = (fun i -> Buffer.add_string buf (String.make i ' '))
    }
 
 (*!

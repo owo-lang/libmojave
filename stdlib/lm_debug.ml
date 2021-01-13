@@ -318,10 +318,6 @@ type profile = {
    exn : times
 }
 
-type 'a res =
-   Ok of 'a
- | Exn of exn
-
 let tbl = Hashtbl.create 19
 
 let compare (_, t1) (_, t2) =
@@ -362,8 +358,8 @@ let timing_wrap s (f : 'a -> 'b) (arg : 'a) =
    let start_f = gettimeofday () in
    let start_p = times () in
    let res =
-      try (Ok (f arg) : 'b res)
-      with exn -> Exn exn
+      try (Ok (f arg) : ('b, exn) result)
+      with exn -> Error exn
    in
    let end_f = gettimeofday () in
    let end_p = times () in
@@ -380,7 +376,7 @@ let timing_wrap s (f : 'a -> 'b) (arg : 'a) =
    let times =
       match res with
          Ok _ -> times.ok
-       | Exn _ -> times.exn
+       | Error _ -> times.exn
    in
       times.calls <- times.calls + 1;
       times.wtime <- times.wtime +. end_f -. start_f;
@@ -388,7 +384,7 @@ let timing_wrap s (f : 'a -> 'b) (arg : 'a) =
       times.stime <- times.stime +. end_p.tms_stime -. start_p.tms_stime;
       match res with
          Ok res -> res
-       | Exn exn -> raise exn
+       | Error exn -> raise exn
 
 (*
  * -*-

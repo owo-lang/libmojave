@@ -134,7 +134,7 @@ let html_flush buf =
  * Get the spacer from the prefix.
  *)
 let html_spacer buf =
-   let buffer = Buffer.create 16 in
+   let buffer = Buffer.create 47 in
       Buffer.add_string buffer "<span style=\"visibility:hidden\">";
       List.iter (fun item ->
             match item with
