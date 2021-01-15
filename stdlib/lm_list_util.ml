@@ -424,8 +424,19 @@ let rec subtract_list l1 l2 =
          []
 
 (*
- * fold_left + map = fold_map, named as fold_left_map in Stdlib
+ * fold_left + map = fold_map
  *)
+let fold_left_map f i l =
+  let acc = ref i in !acc, List.map (fun e -> let i, r = f !acc e in acc := i; r) l
+
+let rev_fold_map f accu l =
+  let rec aux accu l_accu = function
+    | [] -> accu, l_accu
+    | x :: l ->
+        let accu, x = f accu x in
+        aux accu (x :: l_accu) l in
+  aux accu [] l
+
 let rec fold_map2to1 f i l1 l2 =
   match l1, l2 with
       [], [] -> i, []

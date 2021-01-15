@@ -120,6 +120,8 @@ val fold_filter : ('a -> 'b -> 'a * bool) -> 'a -> 'b list -> 'a * 'b list
 (*
  * fold_map
  *)
+val fold_left_map : ('a -> 'b -> 'a * 'c) -> 'a -> 'b list -> 'a * 'c list
+val rev_fold_map : ('a -> 'b -> 'a * 'c) -> 'a -> 'b list -> 'a * 'c list
 val fold_map2to1 : ('a -> 'b -> 'c -> 'a * 'd) -> 'a -> 'b list -> 'c list -> 'a * 'd list
 val fold_map1to2 : ('a -> 'b -> 'a * 'c * 'd) -> 'a -> 'b list -> 'a * 'c list * 'd list
 

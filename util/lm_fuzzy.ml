@@ -28,8 +28,6 @@
  * ldbeth@sdf.org
  *)
 
-type bigrams = Lm_bitset.t
-
 let size = Lm_bitset.count
 
 type kind = Alpha of int | Digit of int | Other
