@@ -96,7 +96,7 @@ let append_list a = function
  | hd :: tl ->
       let l = Array.length a in
       let res = Array.make (l + List.length tl + 1) hd in
-      for i = 0 to pred l do Array.unsafe_set res i (Array.unsafe_get a i) done;
+      Array.blit a 0 res 0 l;
       let rec aux i = function
          [] -> res
        | hd :: tl ->
@@ -111,14 +111,14 @@ let append_list_array a1 l a2 =
          let l1 = Array.length a1 and l2 = Array.length a2 in
          let offs = succ l1 + List.length tl in
          let res = Array.make (offs + l2) hd in
-         for i = 0 to pred l1 do Array.unsafe_set res i (Array.unsafe_get a1 i) done;
+         Array.blit a1 0 res 0 l1;
          let rec aux i = function
             [] -> ()
           | hd :: tl ->
                Array.unsafe_set res i hd;
                aux (succ i) tl
          in aux (succ l1) tl;
-         for i = 0 to pred l2 do Array.unsafe_set res (i+offs) (Array.unsafe_get a2 i) done;
+         Array.blit a2 0 res offs l2;
          res
 
 let replace a i j = function
@@ -131,12 +131,8 @@ let replace a i j = function
       if i>=0 && j>0 && ij<=l then
          let dl = List.length tl - j +1 in
          let res = Array.make (l+dl) hd in
-         for k=0 to (pred i) do
-            Array.unsafe_set res k (Array.unsafe_get a k)
-         done;
-         for k=ij to (pred l) do
-            Array.unsafe_set res (k+dl) (Array.unsafe_get a k)
-         done;
+         Array.blit a 0 res 0 i;
+         Array.blit a ij res (ij+dl) l;
          let rec aux k = function
             [] -> res
           | hd :: tl ->
