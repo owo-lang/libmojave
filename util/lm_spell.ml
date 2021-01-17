@@ -33,15 +33,15 @@
  * minimized, and for efficiency they are stored as is in a single hashtable.
  *)
 type dict =
-   { paths : (char * int) list array;
+   { paths : (char array * int array) array;
      states : Lm_bitset.t;
-     size : int;
+     (* size : int; *)
      extra : (string, unit) Hashtbl.t (* Could be other set representaion *)
    }
 
 let init_dict n =
-   { paths = Array.make n [];
-     states = Lm_bitset.create n; size = n;
+   { paths = Array.make n ([||], [||]);
+     states = Lm_bitset.create n; (* size = n; *)
      extra = Hashtbl.create 13 }
 
 let is_in_extra extra e =
@@ -52,37 +52,22 @@ let add_to_extra extra e =
 
 (* temporarly add new word to dictionary *)
 let add_word d w =
-   let b = String.length w - 1 in
-   let rec aux st n =
-      let pths = Array.get d.paths st in
-      let c = w.[n] in
-         match List.assoc_opt c pths with
-            Some stn when (stn < d.size) ->
-               if n < b then
-                  aux stn (succ n)
-               else (* eol of word, which means current word is a prefix of
-                     * an existed word.
-                     *)
-                  Lm_bitset.set d.states stn
-            (* add the word to extra table *)
-          | Some _ -> add_to_extra d.extra w (* already a word with same prefix *)
-          | None -> Array.set d.paths st ((c, d.size) :: pths); (* push new entry *)
-                    add_to_extra d.extra w
-   in aux 0 0
+   add_to_extra d.extra w
 
 (* search word in dictionary *)
 let check d w =
    let b = String.length w - 1 in
    let rec aux st n =
-         match List.assoc_opt w.[n] (Array.get d.paths st) with
-            Some stn when (stn < d.size) ->
-               if n < b then
-                  aux stn (succ n)
-               else
-                  Lm_bitset.get d.states stn
-          | Some _ -> is_in_extra d.extra w
+      let index, states = Array.get d.paths st in
+         match Lm_array_util.index_opt w.[n] index with
+            Some idx ->
+               let stn = Array.get states idx in
+                  if n < b then
+                     aux stn (succ n)
+                  else
+                     Lm_bitset.get d.states stn
           | None -> false
-   in aux 0 0
+   in aux 0 0 || is_in_extra d.extra w
 
 (*******
  * Build the acylic graph
@@ -179,15 +164,22 @@ let compress_fsm root size =
    let dict = init_dict size in
    let pths, ends, tmp = dict.paths, dict.states, Array.make size [] in
    let genid () = incr count; !count in
-   let iter = List.map (fun { char = c; next = n } ->
-                    if n.id < 0 then
-                    begin
-                       let id = genid() in
-                          n.id <- id;
-                          Array.set tmp id n.children;
-                          if n.term then Lm_bitset.set ends id
-                    end;
-                    (c, n.id)) in
+   let iter l =
+      let n = List.length l in
+      let idx = Array.make n ' ' in
+      let st = Array.make n 0 in
+         List.iteri (fun i { char = c; next = n } ->
+               if n.id < 0 then
+               begin
+                  let id = genid() in
+                     n.id <- id;
+                     Array.set tmp id n.children;
+                     if n.term then Lm_bitset.set ends id
+               end;
+               Array.set idx i c;
+               Array.set st i n.id) l;
+         (idx, st)
+   in
       Array.set tmp 0 root.children;
       for i = 0 to size - 1 do
          Array.set pths i (iter (Array.get tmp i));
@@ -198,11 +190,14 @@ let make_dict f =
    let r, s = build_from_file f in
       compress_fsm r s
 
-let to_channel out d = Marshal.to_channel out (d.paths, d.states, d.size) []
+let to_channel out d =
+   Marshal.to_channel out d.states [Marshal.No_sharing];
+   Marshal.to_channel out d.paths [Marshal.No_sharing]
 
 let from_channel inx =
-   let p, t, s = Marshal.from_channel inx in
-      { paths = p; states = t; size = s ; extra = Hashtbl.create 13 }
+   let t = Marshal.from_channel inx in
+   let p = Marshal.from_channel inx in
+      { paths = p; states = t; extra = Hashtbl.create 13 }
 
 
 (* foo *)

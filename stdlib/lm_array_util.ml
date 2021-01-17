@@ -75,6 +75,19 @@ let index i v =
    in
       aux 0
 
+let index_opt i v =
+   let l = Array.length v in
+   let rec aux j =
+      if j < l then
+         if i = v.(j) then
+            Some j
+         else
+            aux (j + 1)
+      else
+         None
+   in
+      aux 0
+
 (*
  * Membership in an array.
  *)

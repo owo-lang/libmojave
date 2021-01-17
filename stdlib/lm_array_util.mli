@@ -32,6 +32,7 @@
 
 (* Membership in an array *)
 val index : 'a -> 'a array -> int
+val index_opt : 'a -> 'a array -> int option
 val find_index : ('a -> bool) -> 'a array -> int
 
 (* Test boolean values *)
