@@ -40,14 +40,6 @@ exception CantOpen of string
 exception CantFind of string
 
 (*
- * Utilities on filenames.
- *)
-val parse_path : string list -> string -> string list
-val build_path : string list -> string
-val path_dir : string -> string
-val path_file : string -> string
-
-(*
  * Open a file somewhere in the path if possible.
  *)
 val open_in_path : string list -> string -> in_channel * string
