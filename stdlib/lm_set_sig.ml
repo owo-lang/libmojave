@@ -151,7 +151,7 @@ end
 
 (*
  * Linearly ordered set.
- *)
+ *
 module type LinearSetSig =
 sig
    type elt
@@ -177,7 +177,7 @@ sig
    val mapi : (index -> elt -> elt) -> t -> t
    val init : int -> (index -> elt) -> t
    val collect : (elt, t) Lm_array_util.array_part list -> t
-end
+end *)
 
 (*
  * -*-

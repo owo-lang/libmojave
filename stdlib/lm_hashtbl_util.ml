@@ -37,6 +37,22 @@ let add_hashtbl dst src =
          Hashtbl.replace dst key value) src
 
 (*
+ * Update entry.
+ *)
+let update tbl key f d =
+   match Hashtbl.find_opt tbl key with
+      Some e -> Hashtbl.replace tbl key (f e)
+    | None -> Hashtbl.add tbl key (f d)
+
+let update_opt tbl key f =
+   Hashtbl.replace tbl key (f (Hashtbl.find_opt tbl key))
+
+let update_if tbl key f =
+   match Hashtbl.find_opt tbl key with
+      Some e -> Hashtbl.replace tbl key (f e)
+    | None -> ()
+
+(*
  * -*-
  * Local Variables:
  * Caml-master: "compile"

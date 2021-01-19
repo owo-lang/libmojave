@@ -598,7 +598,7 @@ let get_hard_binder buf =
  * of the string s (which can be different from String.length s when UTF-8
  * or other multi-byte representations are used.
  *)
-external display_width : string -> int = "display_width_of_string"
+external display_width : string -> int = "display_width_of_string" [@@noalloc]
 
 let format_raw_string buf s =
    push_command buf (Text (display_width s, s))

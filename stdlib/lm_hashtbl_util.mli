@@ -35,6 +35,13 @@
 val add_hashtbl : ('a, 'b) Hashtbl.t -> ('a, 'b) Hashtbl.t -> unit
 
 (*
+ * Update entry.
+ *
+ *)
+val update : ('a, 'b) Hashtbl.t -> 'a -> ('b -> 'b) -> 'b -> unit
+val update_opt : ('a, 'b) Hashtbl.t -> 'a -> ('b option -> 'b) -> unit
+val update_if : ('a, 'b) Hashtbl.t -> 'a -> ('b -> 'b) -> unit
+(*
  * -*-
  * Local Variables:
  * Caml-master: "compile"
