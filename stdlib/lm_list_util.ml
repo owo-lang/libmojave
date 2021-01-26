@@ -624,7 +624,7 @@ let rec removeq x = function
       else
          h :: removeq x t
  | [] ->
-      raise (Failure "Lm_list_util.removeq")
+      raise Not_found
 
 let rec remove x = function
    h::t ->
@@ -633,7 +633,7 @@ let rec remove x = function
       else
          h :: remove x t
  | [] ->
-      raise (Failure "Lm_list_util.remove")
+      raise Not_found
 
 let rec tryremove x = function
    (h :: t) as l ->
