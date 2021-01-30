@@ -128,6 +128,11 @@ let set_int buf offset code =
    Bytes.set buf (offset + 3) (Char.chr (code land 255))
 
 (*
+ * For debugging
+ *)
+external id_of_buf : bytes -> int = "%identity"
+
+(*
  * Character buffer for communication on the socket.
  *)
 let char_buf = Bytes.make 1 ' '
@@ -191,7 +196,7 @@ let create_server dir =
    let buf = Lm_mmap.to_bytes file in
    let _ =
       if !debug_pipe then
-         eprintf "Buffer size: 0x%08x %d%t" (Obj.magic buf) (Bytes.length buf) eflush
+         eprintf "Buffer size: 0x%08x %d%t" (id_of_buf buf) (Bytes.length buf) eflush
    in
    let length = (Bytes.length buf) lsr 1 in
    let sock = Unix.socket Unix.PF_UNIX Unix.SOCK_STREAM 0 in
@@ -255,7 +260,7 @@ let create_client dir =
    let buf = Lm_mmap.to_bytes file in
    let _ =
       if !debug_pipe then
-         eprintf "Buffer size: 0x%08x %d%t" (Obj.magic buf) (Bytes.length buf) eflush
+         eprintf "Buffer size: 0x%08x %d%t" (id_of_buf buf) (Bytes.length buf) eflush
    in
    let length = (Bytes.length buf) lsr 1 in
       { mmap_block_size = length;
@@ -344,7 +349,7 @@ let close_client mmap =
  *)
 let block mmap =
    if !debug_pipe then
-      eprintf "Lm_mmap_pipe.block: 0x%08x%t" (Obj.magic mmap.mmap_data) eflush;
+      eprintf "Lm_mmap_pipe.block: 0x%08x%t" (id_of_buf mmap.mmap_data) eflush;
    match mmap.mmap_socket with
       Some sock ->
          let count = Unix.read sock char_buf 0 1 in
@@ -358,7 +363,7 @@ let block mmap =
  *)
 let write mmap code name raw_write =
    if !debug_pipe then
-      eprintf "Lm_mmap_pipe.write: begin 0x%08x%t" (Obj.magic mmap.mmap_data) eflush;
+      eprintf "Lm_mmap_pipe.write: begin 0x%08x%t" (id_of_buf mmap.mmap_data) eflush;
    match mmap.mmap_socket with
       Some sock ->
          let { mmap_write_offset = woffset;
@@ -398,7 +403,7 @@ let write mmap code name raw_write =
  *)
 let read mmap raw_read =
    if !debug_pipe then
-      eprintf "Lm_mmap_pipe.read: begin 0x%08x%t" (Obj.magic mmap.mmap_data) eflush;
+      eprintf "Lm_mmap_pipe.read: begin 0x%08x%t" (id_of_buf mmap.mmap_data) eflush;
    match mmap.mmap_socket with
       Some sock ->
          let { mmap_read_offset = roffset;
