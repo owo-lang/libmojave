@@ -47,6 +47,7 @@ STDLIB_FILES[] =
     lm_array_linear_set
     lm_splay_linear_set
     lm_index
+    lm_fqueue
     lm_serial_map
     lm_splay
     lm_thread_pool

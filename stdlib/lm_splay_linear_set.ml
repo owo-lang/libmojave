@@ -309,7 +309,7 @@ sition *)
       (* print "split " t; *)
       splay ind [] t;
       match t.tree with
-         Node (i,e,l,r,_) -> l,e,{ tree = Offset(succ i,r) }
+         Node (i,e,l,r,_) -> l,e,{ tree = Offset(-(succ i),r) }
        | _ -> raise (Invalid_argument "Linear_set.split")
 
    let lazy_sub_map f t i len =
