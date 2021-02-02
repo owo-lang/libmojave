@@ -56,11 +56,30 @@ let dice_coeff a b =
    let inter_s = size (Lm_bitset.inter bi_a bi_b) in
       (2.0 *. Float.of_int inter_s) /. Float.of_int ((size bi_a) + (size bi_b))
 
+let levenshtein ?(subst=1) ?(insdel=1) a b =
+   let len_a, len_b = String.length a, String.length b in
+   let arr1 = Array.init (succ len_a) (fun x -> x * insdel) in
+   let arr2 = Array.make (succ len_a) 0 in
+   let rec aux n a1 a2 =
+      if n < len_b then begin
+         Array.set a2 0 (succ n * insdel);
+         for i = 1 to len_a do
+            let cost = if b.[n] = a.[i-1] then 0 else subst in
+               Array.set a2 i (min (insdel + Array.get a2 (i-1))
+                               (min (insdel + Array.get a1 i)
+                                (cost + Array.get a1 (i-1))))
+         done;
+         aux (succ n) a2 a1
+      end
+      else Array.get a1 len_a
+   in aux 0 arr1 arr2
 
+
+(* test
 let rate xs s n =
    List.map (fun x -> (dice_coeff s x, x)) xs
    |> List.sort (fun (a,_) (b,_) -> Int.neg (compare a b))
-   |> Lm_list_util.firstn n
+   |> Lm_list_util.firstn n *)
 
 (*
  * -*-

@@ -30,7 +30,10 @@
 
 (* Dice Coefficient *)
 val dice_coeff : string -> string -> float
-val rate : string list -> string -> int -> (float * string) list
+
+(* Levenshtein distance *)
+val levenshtein : ?subst:int -> ?insdel:int -> string -> string -> int
+(* val rate : string list -> string -> int -> (float * string) list *)
 
 (*
  * -*-
