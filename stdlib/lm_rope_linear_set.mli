@@ -1,7 +1,6 @@
 (*
- * This module provides a signature for a linearly ordered numbered set
- * with lazy application. Such sets are used, for example, to keep
- * hypothesis in a sequent
+ * This module provides a linearly ordered numbered set implementation
+ * with lazy functions based on arrays
  *
  * ----------------------------------------------------------------
  *
@@ -35,41 +34,8 @@
  *
  * Author: Alexey Nogin
  *)
+open Lm_linear_set_sig
 
-module type LinearSetSig =
-sig
-   type elt
-   type t
-   type index = int
+type 'a linear_set
 
-   val empty : t
-   val singleton : elt -> t
-   val length : t -> int
-   val get : t -> index -> elt
-   val make : int -> elt -> t
-   val to_list : t -> elt list
-   val of_list : elt list -> t
-   val iter : (elt -> unit) -> t -> unit
-   val map : (elt -> elt) -> t -> t
-   val fold : ('a -> index -> elt -> 'a) -> 'a -> t -> 'a
-   val fold_map : ('a -> elt -> 'a * elt) -> 'a -> t -> 'a * t
-   val split : t -> index -> t * elt * t
-   val drop : index -> t -> t
-   val append : t -> elt -> t -> t
-   val append_list : t -> elt list -> t -> t
-   val concat : t -> t -> t
-   val lazy_apply : (elt -> elt) -> t -> t
-   val lazy_sub_map : (elt -> elt) -> t -> index -> index -> t
-
-   val mapi : (index -> elt -> elt) -> t -> t
-   val init : int -> (index -> elt) -> t
-   val collect : (elt, t) Lm_array_util.array_part list -> t
-
-   val for_all : (elt -> bool) -> t -> bool
-   val exists : (elt -> bool) -> t -> bool
-end
-
-module type TypeSig =
-sig
-   type t
-end
+module Make (Type : TypeSig) : LinearSetSig with type elt = Type.t and type t = Type.t linear_set

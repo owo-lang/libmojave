@@ -34,8 +34,16 @@
  *
  * Author: Alexey Nogin <nogin@cs.cornell.edu>
  *)
+open Lm_debug
 open Lm_array_util
 open Lm_linear_set_sig
+
+let debug_splay =
+   create_debug (**)
+      { debug_name = "splay";
+        debug_description = "check splay operations";
+        debug_value = false
+      }
 
 type ind = int
 type 'a tree =
@@ -65,18 +73,19 @@ struct
       { tree = Leaf } -> ()
     | { tree = Node (i,_,t1,t2,_) } ->
       print_aux (s^"/") t1;
-      printf "%s%d\n" s i;
+      eprintf "%s%d\n" s i;
       print_aux (s^"\\") t2;
     | { tree = Lazy (_,t) } ->
-         printf "%s Lazy\n" s;
+         eprintf "%s Lazy\n" s;
          print_aux (s^"|") t
     | { tree = Offset (i,t) } ->
-         printf "%s Offset %d" s i;
+         eprintf "%s Offset %d" s i;
          print_aux (s^"|") t
 
-   let _print s t = print_aux s t; printf "%t" flush
+   let print s t = print_aux s t; eprintf "%t" flush
 
-   let rec length t = match t.tree with
+   let rec length t =
+      match t.tree with
       Leaf  -> 0
     | Node (_,_,_,_,i) -> i
     | Lazy (_,t) | Offset (_,t) -> length t
@@ -92,9 +101,9 @@ struct
             { tree = create_aux start numl elt },
             { tree = create_aux startr numr elt }, num )
 
-   let create i e = { tree = create_aux 0 i e }
-   let make = create
+   let make i e = { tree = create_aux 0 i e }
 
+   (* Apply lazy function *)
    let rec go_down f = function
       { tree = Leaf } -> Leaf
     | { tree = Node (i,e,t1,t2,n) } ->
@@ -103,6 +112,13 @@ struct
          t.tree <- go_down f2 tree;
          go_down f t
     | { tree = Offset(i,t) } -> Offset(i,{ tree = go_down f t })
+
+   let go_down f t =
+      let res = go_down f t in
+	       if !debug_splay then begin
+         eprintf "\n\nGD\n";
+         print "gd " t end;
+      res
 
    let rec to_list_aux collect = function
       { tree = Leaf } -> collect
@@ -114,7 +130,12 @@ struct
     | { tree = Offset (_,t) } ->
          to_list_aux collect t
 
-   let to_list t = to_list_aux [] t
+   let to_list t =
+      let res = to_list_aux [] t in
+	       if !debug_splay then begin
+         eprintf "\n\nTL\n";
+         print "tl " t end;
+      res
 
    let rec iter ( f : elt -> unit ) = function
       { tree = Leaf } -> ()
@@ -179,7 +200,7 @@ struct
 
    let of_list l =
       match of_list_aux (List.length l) 0 l with
-         t,_,[] -> (* print "of_list " t; *) t
+         t,_,[] -> if !debug_splay then print "of_list " t; t
        | _ -> raise (Invalid_argument "Linear_set.of_list")
 
    let lazy_apply f t = { tree = Lazy (f,t) }
@@ -189,9 +210,9 @@ struct
       let ss1 = succ s1 in
       { tree = Node (s1,e,t1,{ tree = Offset (ss1,t2) }, ss1+(length t2)) }
 
-   (* XXX: this is very slow of course *)
+   (* XXX: this is very slow of course
    let concat t1 t2 =
-      of_list (to_list t1 @ to_list t2)
+      of_list (to_list t1 @ to_list t2) *)
 
    let compose g f x = g(f(x))
 
@@ -297,16 +318,25 @@ sition *)
          push_down t;
          splay ind path t
 
+   let splay ind path t =
+      let () = splay ind path t in
+      if !debug_splay then begin
+         eprintf "\n\nSPL %d\n" ind;
+         print "spl " t
+      end
+
    let get t ind =
-      (* printf "\n\nGET %d\n" ind;
-      print "get " t; *)
       splay ind [] t;
+      (* if !debug_splay then begin
+         eprintf "\n\nGET %d\n" ind;
+         print "get " t
+      end; *)
       match t.tree with
          Node (_,e,_,_,_) -> e
        | _ -> raise (Invalid_argument "Linear_set.get")
 
    let split t ind =
-      (* print "split " t; *)
+      if !debug_splay then print "split " t;
       splay ind [] t;
       match t.tree with
          Node (i,e,l,r,_) -> l,e,{ tree = Offset(-(succ i),r) }
@@ -315,7 +345,7 @@ sition *)
    let lazy_sub_map f t i len =
       if len=0 then empty else
       let r,lt = if i=0 then t,length t else begin
-         (* printf "\n\nSUB_MAP %d %d\n" i len;
+         (* eprintf "\n\nSUB_MAP %d %d\n" i len;
          print "sub_map " t; *)
          splay i [] t;
          match t.tree with
@@ -345,13 +375,15 @@ sition *)
          push_down t2;
          join t1 t2
     | { tree = Node (_,_,_,_,n1) }, _ -> begin
-         (* print "join " t2; *)
+         if !debug_splay then print "join " t2;
          splay 0 [] t2;
          match t2 with
             { tree = Node (0,e,_,r,n2) } ->
                { tree = Node (n1,e,t1,{ tree = Offset (succ n1,r) },n1+n2) }
           | _ -> raise (Invalid_argument "Linear_set.join")
       end
+
+   let concat = join
 
    let append_list t1 l t2 = match l with
       [] -> join t1 t2

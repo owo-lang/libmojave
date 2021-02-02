@@ -190,6 +190,9 @@ let sub_map f a i len =
                done;
                a'
 
+let sub_iter f a i len =
+   for i = i to pred (i + len) do f (Array.unsafe_get a i) done
+
 (*
  * Compute the total length of the parts.
  * As a side-effect, we raise an exception if

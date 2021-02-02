@@ -47,7 +47,6 @@ struct
    let empty = [||]
    let singleton x = [|x|]
    let length = Array.length
-   let create = Array.make
    let make = Array.make
    let iter = Array.iter
    let map = Array.map
@@ -61,7 +60,7 @@ struct
    let append a1 e a2 =
       let l1 = length a1 and l2 = length a2 in
       if l1 = 0 && l2 = 0 then [|e|] else begin
-         let r = create (succ l1 + l2) e in
+         let r = make (succ l1 + l2) e in
          Array.blit a1 0 r 0 l1;
          Array.blit a2 0 r (succ l1) l2;
          r
@@ -78,6 +77,9 @@ struct
 
    let split t ind =
       Array.sub t 0 ind, t.(ind), Array.sub t (succ ind) (Array.length t - ind - 1)
+
+   let drop ind t =
+      Array.sub t ind (Array.length t - ind)
 
    let lazy_sub_map = Lm_array_util.sub_map
    let append_list = Lm_array_util.append_list_array

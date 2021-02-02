@@ -60,6 +60,7 @@ val append_list_array : 'a array -> 'a list -> 'a array -> 'a array
  * Map over a sub-array.
  *)
 val sub_map : ('a -> 'b) -> 'a array -> int -> int -> 'b array
+val sub_iter : ('a -> unit) -> 'a array -> int -> int -> unit
 
 (*
  * This function builds arrays out of sub-arrays.
