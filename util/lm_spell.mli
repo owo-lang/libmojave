@@ -34,8 +34,10 @@ type state
 val check : dict -> string -> bool
 val add_word : dict -> string -> unit
 
-(* val test : state -> string -> bool *)
-(* val thetas : state -> string -> state * string *)
+(* anagram dict word subset
+   produce anagrams from the dictionary *)
+val anagram : dict -> string -> bool -> string
+
 val make_dict : string -> dict
 val to_channel : out_channel -> dict -> unit
 val from_channel : in_channel -> dict

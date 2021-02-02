@@ -70,6 +70,47 @@ let check d w =
    in aux 0 0 || is_in_extra d.extra w
 
 (*******
+ * Anagram
+ * Credits give to Jean-Christophe Filliatre
+ *)
+
+(* Implements a Char bag *)
+module Cmap = Lm_map.LmMake (Char)
+
+let ms_add c m =
+  try let n = Cmap.find m c in Cmap.add m c (succ n)
+  with Not_found -> Cmap.add m c 1
+
+let ms_remove c m =
+  let n = Cmap.find m c in
+  if n = 1 then Cmap.remove m c else Cmap.add m c (pred n)
+
+let ms_of_string w =
+  let n = String.length w in
+  let rec add i = if i = n then Cmap.empty else ms_add w.[i] (add (succ i)) in
+  add 0
+
+let rec print_prefix out = function
+  | [] -> ()
+  | c::l -> print_prefix out l; Printf.bprintf out "%c" c
+
+let anagram { paths = paths; states = states; _ } w subset =
+   let buf = Buffer.create 21 in
+   let rec traverse pref i s out =
+      let b = Lm_bitset.get states i in
+      let idx, nxt = Array.get paths i in
+         if b && (Cmap.is_empty s || subset) then
+            Printf.bprintf out " %a" print_prefix pref;
+         Cmap.iter
+         (fun c _ ->
+               match Lm_array_util.index_opt c idx with
+                  Some i -> traverse (c :: pref) (Array.get nxt i) (ms_remove c s) out
+                | None -> ()) s
+   in
+      Printf.bprintf buf "%t" (traverse [] 0 (ms_of_string w));
+      Buffer.contents buf
+
+(*******
  * Build the acylic graph
  * See Incremental Construction of Minimal Acyclic Finite-State Automata, Jan Daciuk*
  *)
