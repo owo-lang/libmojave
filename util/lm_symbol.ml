@@ -268,23 +268,18 @@ let rec output_symbol_list out vl =
 (*
  * Print extended symbols. Used in FIR printing.
  *)
-exception Has
-
 let string_of_ext_symbol (i, s) =
    let has_special_char s =
-      try
-         for i = 0 to String.length s - 1 do
-            let c = Char.lowercase_ascii (String.get s i) in
-               if not ((Char.code c >= Char.code 'a' && Char.code c <= Char.code 'z')
-                       || (Char.code c >= Char.code '0' && Char.code c <= Char.code '9')
-                       || c = '_')
-               then
-                  raise Has
-         done;
-         false
-      with
-         Has ->
-            true
+      let len = String.length s in
+      let rec aux i =
+         if i > len then false
+         else let c = Char.lowercase_ascii (String.get s i) in
+                 if not ((Char.code c >= Char.code 'a' && Char.code c <= Char.code 'z')
+                         || (Char.code c >= Char.code '0' && Char.code c <= Char.code '9')
+                         || c = '_')
+                 then true
+                 else aux (succ i)
+      in aux 0
    in
    let s =
       if i = 0 then
@@ -311,36 +306,6 @@ let rec pp_print_symbol_list buf vl =
          fprintf buf "%a, %a" pp_print_symbol v pp_print_symbol_list vl
     | [] ->
          ()
-
-(*
- * Print extended symbols. Used in FIR printing.
- *)
-let string_of_ext_symbol (i, s) =
-   let has_special_char s =
-      try
-         for i = 0 to String.length s - 1 do
-            let c = Char.lowercase_ascii (String.get s i) in
-               if not ((Char.code c >= Char.code 'a' && Char.code c <= Char.code 'z')
-                       || (Char.code c >= Char.code '0' && Char.code c <= Char.code '9')
-                       || c = '_')
-               then
-                  raise Has
-         done;
-         false
-      with
-         Has ->
-            true
-   in
-   let s =
-      if i = 0 then
-         s
-      else
-         sprintf "%s%d" s i
-   in
-      if has_special_char s then
-         sprintf "`\"%s\"" s
-      else
-         s
 
 (*
  * Compare for equality.

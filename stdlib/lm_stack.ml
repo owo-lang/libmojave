@@ -39,7 +39,7 @@ type 'a stack =
 
 let make n e =
    let ns = Lm_int_util.clp2 n in
-      { old = Array.make 0 e;
+      { old = [||];
         cur = Array.make ns e;
         size = ns;
         i = 0;

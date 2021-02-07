@@ -52,6 +52,7 @@ val is_string_prefix : string -> string -> bool
  * Hex representation of a string.
  *)
 val unhex : char -> int
+val hex_char : int -> char
 val hexify : string -> string
 val hexify_sub : string -> int -> int -> string
 val unhexify : string -> string

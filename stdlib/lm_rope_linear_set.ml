@@ -147,7 +147,13 @@ struct
                      aux x' i' c.right
       in aux x 0 a
 
-   let get = Array.get
+   let rec get t i =
+      match t with
+         Sub s when i >= 0 && i < s.len -> Array.get s.string (s.beg + i)
+       | Sgt e when i = 1 -> e
+       | Cat c when i >= 0 && i < c.size ->
+            if i < c.llen then get c.left i else get c.right (i - c.llen)
+       | _ -> invalid_arg "lm_rope.get"
 
    let split t ind =
       Array.sub t 0 ind, t.(ind), Array.sub t (succ ind) (Array.length t - ind - 1)
@@ -196,5 +202,19 @@ struct
     | Cat { left = lt; right = rt; _ } ->
          for_all f lt && for_all f rt
 
-   (* let rec exists f = Array.exists *)
+   let exi_sub p a beg len =
+      let n = beg + len in
+      let rec loop i =
+         if i = n then false
+         else if p (Array.unsafe_get a i) then true
+         else loop (succ i) in
+         loop beg
+
+	let rec exists f = function
+      Ept -> false
+    | Sgt e -> f e
+    | Sub s -> exi_sub f s.string s.beg s.len
+    | Cat { left = lt; right = rt; _ } ->
+         exists f lt || for_all f rt
+
 end
