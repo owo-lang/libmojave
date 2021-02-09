@@ -25,6 +25,7 @@ CFILES[] =
     lm_ssl
     lm_uname_ext
     lm_channel
+    lm_lz4
     lm_ctype
     lm_locale
     lm_nocompare

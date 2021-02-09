@@ -79,7 +79,7 @@ value omake_shell_pipe_kind(value v_fd)
     return status ? Val_int(1) : Val_int(0);
 }
 
-#else /* WIN32 */
+#else /* !WIN32 */
 
 value omake_shell_peek_pipe(value v_fd)
 {
@@ -93,4 +93,4 @@ value omake_shell_pipe_kind(value v_fd)
     return Val_int(2);
 }
 
-#endif /* WIN32 */
+#endif /* !WIN32 */
