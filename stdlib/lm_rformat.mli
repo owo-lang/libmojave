@@ -108,8 +108,8 @@ val buffer_is_empty : buffer -> bool
  * This will raise Failure if the marshal
  * version changes.
  *)
-val marshal_buffers : buffer list -> string
-val unmarshal_buffers : string -> buffer list
+val marshal_buffers : string -> buffer list -> string
+val unmarshal_buffers : string -> string -> buffer list
 
 (*
  * Specify the max number of characters in the buffer.

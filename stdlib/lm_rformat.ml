@@ -165,7 +165,8 @@ and formatting_info =
    }
 
 and formatting_stack =
-   { mutable formatting_stack : formatting_info list }
+   { mutable formatting_stack : formatting_info list;
+     mutable stack_size : int }
 
 (*
  * This is the info collected for the buffer.
@@ -268,10 +269,10 @@ let clone_format_info info =
       Formatted _
     | Unformatted _ ->
          info
-    | Formatting { formatting_stack = stack } ->
+    | Formatting { formatting_stack = stack; stack_size = i } ->
          Formatting { formatting_stack =
                          List.map (fun info ->
-                               { info with formatting_commands = info.formatting_commands }) stack }
+                               { info with formatting_commands = info.formatting_commands }) stack; stack_size = i }
 
 let clone_buffer buf =
    { buf with buf_info = clone_format_info buf.buf_info }
@@ -310,7 +311,8 @@ let get_formatting_stack buf =
                  [{ formatting_commands = commands;
                     formatting_index = index;
                     formatting_buf = buf
-                  }]
+                  }];
+              stack_size = 1
             }
          in
             buf.buf_info <- Formatting stack;
@@ -324,7 +326,8 @@ let get_formatting_stack buf =
                  [{ formatting_commands = commands;
                     formatting_index = Array.length breaks;
                     formatting_buf = buf
-                  }]
+                  }];
+              stack_size = 1
             }
          in
             buf.buf_info <- Formatting stack;
@@ -335,7 +338,7 @@ let get_formatting_stack buf =
  *)
 let zone_depth = function
    { buf_info = Formatting stack; _ } ->
-      List.length stack.formatting_stack - 1
+      stack.stack_size - 1
  | _ ->
       0
 
@@ -368,7 +371,8 @@ let push_zone buf tag =
       }
    in
       root.root_index <- index;
-      stack.formatting_stack <- info :: stack.formatting_stack
+      stack.formatting_stack <- info :: stack.formatting_stack;
+      stack.stack_size <- succ stack.stack_size
 
 let format_lzone buf =
    push_zone buf LZoneTag
@@ -419,7 +423,8 @@ let format_ezone buf =
                }
             in
                buf'.buf_info <- Unformatted info;
-               stack.formatting_stack <- tail
+               stack.formatting_stack <- tail;
+               stack.stack_size <- pred stack.stack_size
        | _ ->
             raise (Invalid_argument "Lm_rformat.format_ezone (AKA format_popm): unbalanced buffer (use debug_dform_depth to debug)")
 
@@ -463,7 +468,7 @@ let flush_formatting buf =
                       [{ formatting_commands = commands;
                          formatting_index = index;
 			 _
-                       }]
+                       }]; _
       } ->
          buf.buf_info <- Unformatted { unformatted_commands = List.rev commands;
                                        unformatted_index = index
@@ -481,7 +486,7 @@ let flush_formatting buf =
 let format_depth buf =
    match buf.buf_info with
       Formatting stack ->
-         List.length stack.formatting_stack
+         stack.stack_size
     | Unformatted _
     | Formatted _->
          1
@@ -516,7 +521,7 @@ let push_command buf command =
       if count >= bound then
          begin
             let stack = get_formatting_stack buf in
-               while List.length stack.formatting_stack > 2 do format_ezone buf done;
+               while stack.stack_size > 2 do format_ezone buf done;
                raise RFormatOverflow
          end;
       root.root_count <- count + len
@@ -1263,11 +1268,6 @@ type marshal_info =
    }
 
 (*
- * Identifier.
- *)
-let marshal_version = "$Id$"
-
-(*
  * Place in unformatted mode for marshaling.
  *)
 let squash_buffer buf =
@@ -1277,9 +1277,9 @@ let squash_buffer buf =
 (*
  * Marshal a list of buffers.
  *)
-let marshal_buffers bufs =
+let marshal_buffers ver bufs =
    let marshal =
-      { marshal_version = marshal_version;
+      { marshal_version = ver;
         marshal_buffers = List.map squash_buffer bufs
       }
    in
@@ -1288,7 +1288,7 @@ let marshal_buffers bufs =
 (*
  * Recover the buffers.
  *)
-let unmarshal_buffers s =
+let unmarshal_buffers ver s =
    (* Check buffer *)
    let length = String.length s in
    let () =
@@ -1300,7 +1300,7 @@ let unmarshal_buffers s =
          marshal_buffers = bufs
        } = marshal
    in
-      if version <> marshal_version then
+      if version <> ver then
          raise (Failure "Lm_rformat.unmarshal_buffers");
       bufs
 
