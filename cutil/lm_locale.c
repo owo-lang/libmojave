@@ -56,10 +56,11 @@ value is_upper(value chr) {
 	return Val_bool(isupper(c));
 }
 
+/*
 value is_digit(value chr) {
 	int c = Int_val(chr);
 	return Val_bool(isdigit(c));
-}
+} */
 
 value is_graph(value chr) {
 	int c = Int_val(chr);

@@ -64,29 +64,21 @@ let ul = on underline
 
 let code = [| '1' ; '2' ; '3'; '4' ; '5' ; '7' |]
 
-let sgr i =
-   let b = Buffer.create 19 in
+let sgr =
+   let buf = Buffer.create 19 in
+   let () = Buffer.add_string buf "\027[0" in
    let rec aux i =
       if i > 0 then
       begin
-         Buffer.add_char b ';';
-         Buffer.add_char b (Array.get code (Lm_int_util.ctz i));
+         Buffer.add_char buf ';';
+         Buffer.add_char buf (Array.get code (Lm_int_util.ctz i));
          aux (i land (i - 1)) (* rightmost bit off *)
       end
-   in
-      Buffer.add_string b "\027[0";
-      aux i;
-      Buffer.add_char b 'm';
-      Buffer.contents b
-
-(*    ^ (if (get i bold) then ";1" else "")
-      ^ (if (get i dim) then ";2" else "")
-      ^ (if (get i italic) then ";3" else "")
-      ^ (if (get i underline) then ";4" else "")
-      ^ (if (get i blink) then ";5" else "")
-      ^ (if (get i inverse) then ";7" else "")
-      ^ "m"
- *)
+   in (fun i ->
+            Buffer.truncate buf 3;
+            aux i;
+            Buffer.add_char buf 'm';
+            Buffer.contents buf)
 
 let sgr' i = Printf.sprintf "\027[%cm" (Array.get code (Lm_int_util.ctz i))
 

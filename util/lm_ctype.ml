@@ -35,10 +35,13 @@
  *)
 external set_locale: unit -> unit = "set_locale" [@@noalloc]
 external is_print: char -> bool = "is_print" [@@noalloc]
-external is_digit: char -> bool = "is_digit" [@@noalloc]
 external is_alnum: char -> bool = "is_alnum" [@@noalloc]
 external is_upper: char -> bool = "is_upper" [@@noalloc]
 external is_graph: char -> bool = "is_graph" [@@noalloc]
+
+let is_digit = function
+   '0' .. '9' -> true
+ | _ -> false
 
 let _ = set_locale ()
 
@@ -61,7 +64,7 @@ let quote s =
    if s <> "" && is_simple (String.length s) 0 s then
       s
    else
-      "\"" ^ String.escaped s ^ "\""
+      Printf.sprintf "\"%s\"" (String.escaped s)
 
 (*!
  * @docoff
