@@ -29,13 +29,6 @@
  * @email{jyh@cs.caltech.edu}
  * @end[license]
  *)
-open Lm_debug
-
-(*
- * Show the file loading.
- *)
-let _ =
-   show_loading "Loading Lm_array_util%t"
 
 (*
  * Parts for collecting arrays.
@@ -170,6 +163,18 @@ let fold_map f x a =
                     r1 := x
               done;
               !r1, r2
+
+(*
+ * of_list + map
+ *)
+let of_list_map f = function
+    [] -> [||]
+  | hd::tl as l ->
+      let a = Array.make (List.length l) (f hd) in
+      let rec fill i = function
+          [] -> a
+        | hd::tl -> Array.unsafe_set a i (f hd); fill (i+1) tl in
+      fill 1 tl
 
 (*
  * Map over a subarray.

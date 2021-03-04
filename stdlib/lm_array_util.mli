@@ -45,6 +45,11 @@ val exists_true : bool array -> bool
 val fold_map : ('a -> 'b -> 'a * 'c) -> 'a -> 'b array -> 'a * 'c array
 
 (*
+ * of_list + map
+ *)
+val of_list_map : ('a -> 'b) -> 'a list -> 'b array
+
+(*
  * replace A i j B creates a copy of array A
  * where j elements with indices from i to i + j - 1 are
  * replaced with B's elements (if B has length different from j,

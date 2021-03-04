@@ -234,12 +234,7 @@ struct
       match a1, a2 with
          ArgLeft i1, ArgLeft i2
        | ArgRight i1, ArgRight i2 ->
-            if i1 < i2 then
-               -1
-            else if i1 > i2 then
-               1
-            else
-               0
+            Int.compare i1 i2
        | ArgSearch, ArgSearch ->
             0
        | ArgLeft _, ArgRight _

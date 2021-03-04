@@ -244,21 +244,13 @@ static value ssl_info_new(SslInfoKind kind, SOCKET fd, SSL_CTX *context, SSL *ss
  */
 
 /*
- * Say whether SSL is enabled.
- */
-value lm_ssl_enabled(value x)
-{
-    return Val_true;
-}
-
-/*
  * Start the SSL server.
  */
 value lm_ssl_init(value x)
 {
     SSL_load_error_strings();
     SSL_library_init();
-    return Val_unit;
+    return Val_true;
 }
 
 /*
@@ -657,19 +649,11 @@ static value ssl_info_new(SOCKET fd)
 }
 
 /*
- * Say whether SSL is enabled.
- */
-value lm_ssl_enabled(value x)
-{
-    return Val_false;
-}
-
-/*
  * Start the SSL server.
  */
 value lm_ssl_init(value x)
 {
-    return Val_unit;
+    return Val_false;
 }
 
 /*

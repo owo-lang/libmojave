@@ -40,8 +40,8 @@ open Lm_debug
 (*
  * Show the file loading.
  *)
-let _ =
-   show_loading "Loading Lm_file_util%t"
+let () =
+   show_loading "Loading Lm_file_util"
 
 (* Can't open and can't find a file *)
 exception CantOpen of string

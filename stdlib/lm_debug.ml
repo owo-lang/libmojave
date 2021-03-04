@@ -110,14 +110,14 @@ let debuggers () =
       in
          { debug_name = name; debug_description = info; debug_value = !flag }
    in
-      Array.append (**)
+      (* Array.append (**) *)
          (Array.of_list (List.map collect !info))
 (*
          (Array.map  (**)
             (fun name, info, flag -> { debug_name = name; debug_description = info; debug_value = flag })
             (ml_debuggers ()))
- *)
-         [||]
+
+         [||] *)
 
 (*
  * Print a usage argument.
@@ -282,13 +282,9 @@ let debug_load =
         debug_value = false
       }
 
-let eflush outx =
-   output_char outx '\n';
-   flush outx
-
 let show_loading s =
    if !debug_load then
-      eprintf s eflush
+      eprintf "%s\n%!" s
 
 (*
  * Set debug flags from the environment.
@@ -342,8 +338,8 @@ let report (s, t) =
    if t.ok.calls <> 0 && t.exn.calls <> 0 then report1 "Total calls" {
       calls = t.ok.calls + t.exn.calls;
       wtime = t.ok.wtime +. t.exn.wtime;
-      utime = t.ok.utime +.  t.exn.utime;
-      stime = t.ok.stime +.  t.exn.stime
+      utime = t.ok.utime +. t.exn.utime;
+      stime = t.ok.stime +. t.exn.stime
    }
 
 let add s t l = (s,t) :: l

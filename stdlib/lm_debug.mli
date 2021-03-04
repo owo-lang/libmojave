@@ -45,8 +45,8 @@ type debug_info =
      debug_value : bool
    }
 
-(* if "load" debug is true, `show_load (s ^ "%t")' will print s to stderr and flush stderr *)
-val show_loading : ((out_channel -> unit) -> unit, out_channel, unit) format -> unit
+(* if "load" debug is true, `show_load s' will print s to stderr and flush stderr *)
+val show_loading : string -> unit
 
 (*
  * Lm_debug flags.
