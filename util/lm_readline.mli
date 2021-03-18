@@ -28,13 +28,12 @@
    Initialise the readline library.  *)
 val initialize_readline : unit -> unit
 
-
-(* register_commands commands
-   Register a list of commands for tab completion.  This will clear
-   the previous command-list; only one command-list may be installed
+(* register_completion f
+   Register a function for tab completion.  This will override
+   the previous function; only one completion may be installed
    at a time.  Command completion only applies to the first word on
    the command-line.  *)
-val register_commands : string list -> unit
+val register_completion : (string -> string array) -> unit
 
 (* load_history filename
    Load a command history file (one command per line) and append it to the

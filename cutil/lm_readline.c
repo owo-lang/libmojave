@@ -16,6 +16,7 @@
 #include <caml/fail.h>
 
 #ifdef READLINE
+#include <caml/callback.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <errno.h>
@@ -33,73 +34,7 @@
 
 #ifdef READLINE
 
-static int list_index = 0;
-static int len = 0;
-
-static char **commands = NULL;
-
-
-/*
- * Delete a chain of commands
- */
-static void destruct_command_list() {
-
-   char **cptr = commands;
-   if(cptr == NULL) return;
-   while(*cptr != NULL) {
-      free(*cptr);
-      ++cptr;
-   }
-   free(commands);
-   commands = NULL;
-
-}
-
-
-/*
- * Clone a string.
- */
-static char *dupstr(const char *s) {
-
-   char *r = malloc(strlen(s) + 1);
-   if(r == NULL) return(NULL);
-   strcpy(r, s);
-   return(r);
-
-}
-
-
-/*
- * Generator function for command completion.  If state == 0,
- * then we start at the top of the list; otherwise, we use our
- * pre-existing state to resume a pending search.
- */
-static char *command_generator(const char *text, int state) {
-
-   const char *name;
-
-   /* Make sure we have a command list to process */
-   if(commands == NULL) return(NULL);
-
-   /* Are we starting on a new word? */
-   if(state == 0) {
-      list_index = 0;
-      len = strlen(text);
-   }
-
-   /* Return the next command name which partially matches the text */
-   while((name = commands[list_index]) != NULL) {
-      ++list_index;
-      if(strncmp(name, text, len) == 0) {
-         return(dupstr(name));
-      }
-   }
-
-   /* If nothing matched, then return NULL */
-   return(NULL);
-
-}
-
+static const value *command_callback_f = NULL;
 
 /*
  * Attempt command-name completion (assuming a list of
@@ -107,11 +42,30 @@ static char *command_generator(const char *text, int state) {
  */
 static char **command_completion(const char *text, int start, int end) {
 
-   char **matches = NULL;
+   CAMLparam0();
+   CAMLlocal2(words,str);
 
-   if(start == 0) {
-      matches = rl_completion_matches(text, *command_generator);
+   /* disable file pathname completion */
+   rl_attempted_completion_over = 1;
+
+   str = caml_copy_string(text);
+   words = caml_callback(*command_callback_f, str);
+
+   CAMLdrop;
+
+   int n = Wosize_val(words);
+   if (n == 0) return(NULL);
+
+   char **matches = malloc((1 + n) * sizeof(char*));
+   if (matches == NULL) return(matches);
+   int i;
+   for (i = 0; i < n; ++i) {
+       const char *s = String_val(Field(words, i));
+       size_t len = 1 + strlen(s);
+       char *cs = malloc(len);
+       matches[i] = strcpy(cs, s);
    }
+   matches[n] = NULL;
 
    return(matches);
 
@@ -125,8 +79,8 @@ value caml_initialize_readline(value unit) {
 
    CAMLparam1(unit);
 
-   /* Setup the default command table */
-   commands = NULL;
+   /* Setup callback */
+   command_callback_f = caml_named_value("readline completion");
 
    /* Tell the completer about our command completion engine */
    rl_attempted_completion_function = *command_completion;
@@ -141,47 +95,6 @@ value caml_initialize_readline(value unit) {
 
 }
 
-
-/*
- * Register a new list of commands.
- */
-value caml_register_commands(value new_commands) {
-
-   CAMLparam1(new_commands);
-   CAMLlocal1(cptr);
-   int length;
-
-   /* Try to figure out the length of this list... */
-   cptr = new_commands;
-   length = 0;
-   while(Is_block(cptr)) {
-      cptr = Field(cptr, 1);
-      ++length;
-   }
-
-   /* Allocate the real, internal command structure */
-   destruct_command_list();
-   commands = malloc(sizeof(char *) * (length + 1));
-   if(commands == NULL) {
-      CAMLreturn(Val_unit);
-   }
-
-   cptr = new_commands;
-   length = 0;
-   while(Is_block(cptr)) {
-      /* This is a CONS cell (I hope!) */
-      commands[length] = dupstr(String_val(Field(cptr, 0)));
-      cptr = Field(cptr, 1);
-      ++length;
-   }
-
-   /* Clear the final entry in the commands list */
-   commands[length] = NULL;
-
-   /* We were apparently successful */
-   CAMLreturn(Val_unit);
-
-}
 
 value caml_read_history(value name) {
 
@@ -240,17 +153,6 @@ value caml_history_truncate_file(value name, value nlines) {
 value caml_initialize_readline(value unit) {
 
    CAMLparam1(unit);
-   CAMLreturn(Val_unit);
-
-}
-
-
-/*
- * Doesn't make much sense to register commands...
- */
-value caml_register_commands(value new_commands) {
-
-   CAMLparam1(new_commands);
    CAMLreturn(Val_unit);
 
 }

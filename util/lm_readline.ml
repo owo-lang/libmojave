@@ -26,7 +26,6 @@
 
 (* C readline function returns None at EOF *)
 external caml_initialize_readline : unit -> unit = "caml_initialize_readline"
-external caml_register_commands : string list -> unit = "caml_register_commands"
 external caml_readline : string -> string option = "caml_readline"
 external caml_read_history : string -> unit = "caml_read_history"
 external caml_write_history : string -> unit = "caml_write_history"
@@ -39,13 +38,16 @@ let initialize_readline () =
    caml_initialize_readline ()
 
 
-(* register_commands commands
-   Register a list of commands for tab completion.  This will clear
-   the previous command-list; only one command-list may be installed
+(* register_completion f
+   Register a function for tab completion.  This will override
+   the previous function; only one completion may be installed
    at a time.  Command completion only applies to the first word on
    the command-line.  *)
-let register_commands commands =
-   caml_register_commands commands
+let completion_f = ref (fun _ -> [||])
+let register_completion f = completion_f := f
+
+let completion str = !completion_f str
+let () = Callback.register "readline completion" completion
 
 let read_history filename =
    caml_read_history filename
