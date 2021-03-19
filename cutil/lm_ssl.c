@@ -258,6 +258,7 @@ value lm_ssl_init(value x)
  */
 value lm_ssl_socket(value v_keyfile)
 {
+    CAMLparam1(v_keyfile);
     SOCKET s;
     SSL_CTX *context;
     int one = 1;
@@ -275,7 +276,7 @@ value lm_ssl_socket(value v_keyfile)
     /* Allow the address to be reused */
     setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (void *) &one, sizeof(one));
 
-    return ssl_info_new(SSL_INFO_MASTER, s, context, 0);
+    CAMLreturn(ssl_info_new(SSL_INFO_MASTER, s, context, 0));
 }
 
 /*
@@ -283,10 +284,11 @@ value lm_ssl_socket(value v_keyfile)
  */
 value lm_ssl_serve(value v_fd, value v_keyfile, value v_dhfile)
 {
+    CAMLparam3(v_fd,v_keyfile,v_dhfile);
+    CAMLlocal1(v_info);
     SOCKET s;
     SSL_CTX *context;
     SslInfo *info;
-    value v_info;
     int one = 1;
 
     /* Add context */
@@ -305,7 +307,7 @@ value lm_ssl_serve(value v_fd, value v_keyfile, value v_dhfile)
     /* Set the Diffie-Helman file */
     lm_ssl_ctx_dhfile(info->context, String_val(v_dhfile));
 
-    return v_info;
+    CAMLreturn(v_info);
 }
 
 /*
@@ -313,8 +315,9 @@ value lm_ssl_serve(value v_fd, value v_keyfile, value v_dhfile)
  */
 value lm_ssl_fd(value v_info)
 {
+    CAMLparam1(v_info);
     SslInfo *info = SslInfo_val(v_info);
-    return Val_int(info->fd);
+    CAMLreturn(Val_int(info->fd));
 }
 
 /*
@@ -322,6 +325,7 @@ value lm_ssl_fd(value v_info)
  */
 value lm_ssl_bind(value v_info, value v_addr, value v_port)
 {
+    CAMLparam3(v_info,v_addr,v_port);
     SslInfo *info;
     struct sockaddr_in sin;
 
@@ -336,7 +340,7 @@ value lm_ssl_bind(value v_info, value v_addr, value v_port)
 		  uerr("lm_ssl_bind");
     }
 
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -344,10 +348,11 @@ value lm_ssl_bind(value v_info, value v_addr, value v_port)
  */
 value lm_ssl_get_addr(value v_info)
 {
+    CAMLparam1(v_info);
+    CAMLlocal2(a, addr);
     SslInfo *info;
     struct sockaddr_in sin;
     socklen_t size;
-    value a, addr;
 
     /* Get the address */
     info = SslInfo_val(v_info);
@@ -358,12 +363,10 @@ value lm_ssl_get_addr(value v_info)
 
     /* Allocate the address */
     a = alloc_inet_addr(sin.sin_addr.s_addr);
-    Begin_root(a);
     addr = alloc_small(2, 0);
     Field(addr, 0) = a;
     Field(addr, 1) = Val_int(ntohs(sin.sin_port));
-    End_roots();
-    return addr;
+    CAMLreturn(addr);
 }
 
 /*
@@ -371,12 +374,13 @@ value lm_ssl_get_addr(value v_info)
  */
 value lm_ssl_listen(value v_info, value v_dhfile, value v_count)
 {
+    CAMLparam3(v_info,v_dhfile,v_count);
     SslInfo *info;
 
     info = SslInfo_val(v_info);
     lm_ssl_ctx_dhfile(info->context, String_val(v_dhfile));
     listen(info->fd, Int_val(v_count));
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -384,6 +388,7 @@ value lm_ssl_listen(value v_info, value v_dhfile, value v_count)
  */
 value lm_ssl_accept(value v_info)
 {
+    CAMLparam1(v_info);
     SslInfo *info;
     int fd, code;
     SSL *ssl;
@@ -429,7 +434,7 @@ value lm_ssl_accept(value v_info)
     }
 
     /* Allocate a new struct */
-    return ssl_info_new(SSL_INFO_SLAVE, fd, info->context, ssl);
+    CAMLreturn(ssl_info_new(SSL_INFO_SLAVE, fd, info->context, ssl));
 }
 
 /*
@@ -437,6 +442,7 @@ value lm_ssl_accept(value v_info)
  */
 value lm_ssl_connect(value v_info, value v_addr, value v_port)
 {
+    CAMLparam3(v_info,v_addr,v_port);
     SslInfo *info;
     struct sockaddr_in sin;
     int fd, code;
@@ -484,7 +490,7 @@ value lm_ssl_connect(value v_info, value v_addr, value v_port)
     }
 
     info->ssl = ssl;
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -492,6 +498,7 @@ value lm_ssl_connect(value v_info, value v_addr, value v_port)
  */
 value lm_ssl_read(value v_info, value v_string, value v_off, value v_len)
 {
+    CAMLparam4(v_info,v_bytes,v_off,v_len);
     int off, len, amount;
     SslInfo *info;
     const char *buf;
@@ -503,7 +510,7 @@ value lm_ssl_read(value v_info, value v_string, value v_off, value v_len)
     enter_blocking_section();
     amount = SSL_read(info->ssl, buf + off, len);
     leave_blocking_section();
-    return Val_int(amount);
+    CAMLreturn(Val_int(amount));
 }
 
 /*
@@ -511,6 +518,7 @@ value lm_ssl_read(value v_info, value v_string, value v_off, value v_len)
  */
 value lm_ssl_write(value v_info, value v_string, value v_off, value v_len)
 {
+    CAMLparam4(v_info,v_string,v_off,v_len);
     int off, len, amount;
     SslInfo *info;
     const char *buf;
@@ -530,6 +538,7 @@ value lm_ssl_write(value v_info, value v_string, value v_off, value v_len)
  */
 value lm_ssl_flush(value v_info)
 {
+    CAMLparam1(v_info);
     SslInfo *info;
     BIO *bio;
 
@@ -550,7 +559,7 @@ value lm_ssl_flush(value v_info)
         BIO_flush(bio);
     };
     leave_blocking_section();
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -558,6 +567,7 @@ value lm_ssl_flush(value v_info)
  */
 value lm_ssl_shutdown(value v_info)
 {
+    CAMLparam1(v_info);
     SslInfo *info;
     int code;
 
@@ -578,7 +588,7 @@ value lm_ssl_shutdown(value v_info)
     /* SSL struct is no longer needed */
     SSL_free(info->ssl);
     info->ssl = 0;
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -586,8 +596,9 @@ value lm_ssl_shutdown(value v_info)
  */
 value lm_ssl_close(value v_info)
 {
+    CAMLparam1(v_info);
     ssl_finalize(v_info);
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 #else /* !SSL_ENABLED */
@@ -661,6 +672,7 @@ value lm_ssl_init(value x)
  */
 value lm_ssl_socket(value v_keyfile)
 {
+    CAMLparam1(v_keyfile);
     SOCKET s;
 
     /* Open the socket */
@@ -668,7 +680,7 @@ value lm_ssl_socket(value v_keyfile)
     if(s < 0)
         failwith("lm_ssl_socket: socket call failed");
 
-    return ssl_info_new(s);
+    CAMLreturn(ssl_info_new(s));
 }
 
 /*
@@ -676,8 +688,9 @@ value lm_ssl_socket(value v_keyfile)
  */
 value lm_ssl_serve(value v_fd, value v_keyfile, value v_dhfile)
 {
+    CAMLparam3(v_fd,v_keyfile,v_dhfile);
     SOCKET s = Int_val(v_fd);
-    return ssl_info_new(s);
+    CAMLreturn(ssl_info_new(s));
 }
 
 /*
@@ -685,8 +698,9 @@ value lm_ssl_serve(value v_fd, value v_keyfile, value v_dhfile)
  */
 value lm_ssl_fd(value v_info)
 {
+    CAMLparam1(v_info);
     SslInfo *info = SslInfo_val(v_info);
-    return Val_int(info->fd);
+    CAMLreturn(Val_int(info->fd));
 }
 
 /*
@@ -694,6 +708,7 @@ value lm_ssl_fd(value v_info)
  */
 value lm_ssl_bind(value v_info, value v_addr, value v_port)
 {
+    CAMLparam3(v_info,v_addr,v_port);
     SslInfo *info;
     struct sockaddr_in sin;
 
@@ -708,7 +723,7 @@ value lm_ssl_bind(value v_info, value v_addr, value v_port)
         uerr("lm_ssl_bind");
     }
 
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -716,10 +731,11 @@ value lm_ssl_bind(value v_info, value v_addr, value v_port)
  */
 value lm_ssl_get_addr(value v_info)
 {
+    CAMLparam1(v_info);
+    CAMLlocal2(a, addr);
     SslInfo *info;
     struct sockaddr_in sin;
     socklen_t size;
-    value a, addr;
 
     /* Get the address */
     info = SslInfo_val(v_info);
@@ -730,12 +746,10 @@ value lm_ssl_get_addr(value v_info)
 
     /* Allocate the address */
     a = alloc_inet_addr(sin.sin_addr.s_addr);
-    Begin_root(a);
     addr = alloc_small(2, 0);
     Field(addr, 0) = a;
     Field(addr, 1) = Val_int(ntohs(sin.sin_port));
-    End_roots();
-    return addr;
+    CAMLreturn(addr);
 }
 
 /*
@@ -743,11 +757,12 @@ value lm_ssl_get_addr(value v_info)
  */
 value lm_ssl_listen(value v_info, value v_dhfile, value v_count)
 {
+    CAMLparam3(v_info,v_dhfile,v_count);
     SslInfo *info;
 
     info = SslInfo_val(v_info);
     listen(info->fd, Int_val(v_count));
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -755,6 +770,7 @@ value lm_ssl_listen(value v_info, value v_dhfile, value v_count)
  */
 value lm_ssl_accept(value v_info)
 {
+    CAMLparam1(v_info);
     SslInfo *info;
     SOCKET fd;
     int code;
@@ -770,7 +786,7 @@ value lm_ssl_accept(value v_info)
     }
 
     /* Allocate a new struct */
-    return ssl_info_new(fd);
+    CAMLreturn(ssl_info_new(fd));
 }
 
 /*
@@ -778,6 +794,7 @@ value lm_ssl_accept(value v_info)
  */
 value lm_ssl_connect(value v_info, value v_addr, value v_port)
 {
+    CAMLparam3(v_info,v_addr,v_port);
     SslInfo *info;
     struct sockaddr_in sin;
     SOCKET fd;
@@ -797,7 +814,7 @@ value lm_ssl_connect(value v_info, value v_addr, value v_port)
         uerr("lm_ssl_connect");
     }
 
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 /*
@@ -805,6 +822,7 @@ value lm_ssl_connect(value v_info, value v_addr, value v_port)
  */
 value lm_ssl_read(value v_info, value v_bytes, value v_off, value v_len)
 {
+    CAMLparam4(v_info,v_bytes,v_off,v_len);
     int off, len, amount;
     SslInfo *info;
     unsigned char *buf;
@@ -816,7 +834,7 @@ value lm_ssl_read(value v_info, value v_bytes, value v_off, value v_len)
     enter_blocking_section();
     amount = recv(info->fd, buf + off, len, 0);
     leave_blocking_section();
-    return Val_int(amount);
+    CAMLreturn(Val_int(amount));
 }
 
 /*
@@ -824,6 +842,7 @@ value lm_ssl_read(value v_info, value v_bytes, value v_off, value v_len)
  */
 value lm_ssl_write(value v_info, value v_string, value v_off, value v_len)
 {
+    CAMLparam4(v_info,v_string,v_off,v_len);
     int off, len, amount;
     SslInfo *info;
     const char *buf;
@@ -835,7 +854,7 @@ value lm_ssl_write(value v_info, value v_string, value v_off, value v_len)
     enter_blocking_section();
     amount = send(info->fd, buf + off, len, 0);
     leave_blocking_section();
-    return Val_int(amount);
+    CAMLreturn(Val_int(amount));
 }
 
 value lm_ssl_flush(value v_info)
@@ -856,8 +875,9 @@ value lm_ssl_shutdown(value v_info)
  */
 value lm_ssl_close(value v_info)
 {
+    CAMLparam1(v_info);
     ssl_finalize(v_info);
-    return Val_unit;
+    CAMLreturn(Val_unit);
 }
 
 #endif /* !SSL_ENABLED */
