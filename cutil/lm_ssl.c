@@ -496,15 +496,15 @@ value lm_ssl_connect(value v_info, value v_addr, value v_port)
 /*
  * Read some data from the connection.
  */
-value lm_ssl_read(value v_info, value v_string, value v_off, value v_len)
+value lm_ssl_read(value v_info, value v_bytes, value v_off, value v_len)
 {
     CAMLparam4(v_info,v_bytes,v_off,v_len);
     int off, len, amount;
     SslInfo *info;
-    const char *buf;
+    unsigned char *buf;
 
     info = SslInfo_val(v_info);
-    buf = String_val(v_string);
+    buf = Bytes_val(v_string);
     off = Int_val(v_off);
     len = Int_val(v_len);
     enter_blocking_section();
@@ -516,15 +516,15 @@ value lm_ssl_read(value v_info, value v_string, value v_off, value v_len)
 /*
  * Write some data to the connection.
  */
-value lm_ssl_write(value v_info, value v_string, value v_off, value v_len)
+value lm_ssl_write(value v_info, value v_bytes, value v_off, value v_len)
 {
-    CAMLparam4(v_info,v_string,v_off,v_len);
+    CAMLparam4(v_info,v_bytes,v_off,v_len);
     int off, len, amount;
     SslInfo *info;
-    const char *buf;
+    const unsigned char *buf;
 
     info = SslInfo_val(v_info);
-    buf = String_val(v_string);
+    buf = Bytes_val(v_string);
     off = Int_val(v_off);
     len = Int_val(v_len);
     enter_blocking_section();
@@ -840,15 +840,15 @@ value lm_ssl_read(value v_info, value v_bytes, value v_off, value v_len)
 /*
  * Write some data to the connection.
  */
-value lm_ssl_write(value v_info, value v_string, value v_off, value v_len)
+value lm_ssl_write(value v_info, value v_bytes, value v_off, value v_len)
 {
-    CAMLparam4(v_info,v_string,v_off,v_len);
+    CAMLparam4(v_info,v_bytes,v_off,v_len);
     int off, len, amount;
     SslInfo *info;
-    const char *buf;
+    const unsigned char *buf;
 
     info = SslInfo_val(v_info);
-    buf = String_val(v_string);
+    buf = Bytes_val(v_bytes);
     off = Int_val(v_off);
     len = Int_val(v_len);
     enter_blocking_section();

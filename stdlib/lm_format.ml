@@ -223,11 +223,8 @@ let pp_set_formatter_out_channel form outx =
    form.form_out_string <- output_substring outx;
    form.form_out_flush <- (fun () -> flush outx);
    form.form_out_newline <- (fun () -> output_char outx '\n');
-   form.form_out_space <- (fun i ->
-                                for _ = 0 to pred i do
-                                   output_char outx ' '
-                                done)
-
+   form.form_out_space <- (fun i -> if i > 0 then
+                                       output outx (Bytes.make i ' ') 0 i)
 let pp_set_formatter_output_functions form outx flush =
    form.form_out_string <- outx;
    form.form_out_flush <- flush
@@ -256,10 +253,8 @@ let formatter_of_out_channel outx =
      form_out_string = output_substring outx;
      form_out_flush = (fun () -> flush outx);
      form_out_newline = (fun () -> output_char outx '\n');
-     form_out_space = (fun i ->
-                            for _ = 1 to i do
-                               output_char outx ' '
-                            done);
+     form_out_space = (fun i -> if i > 0 then
+                                   output outx (Bytes.make i ' ') 0 i);
      form_max_boxes = default_max_boxes;
      form_max_indent = default_max_indent;
      form_ellipsis = default_ellipsis;
@@ -302,10 +297,8 @@ let make_formatter outx flush =
      form_out_string = outx;
      form_out_flush = flush;
      form_out_newline = (fun () -> outx "\n" 0 1);
-     form_out_space = (fun i ->
-                            for _ = 1 to i do
-                               outx " " 0 1
-                            done);
+     form_out_space = (fun i -> if i > 0 then
+                                   outx (String.make i ' ') 0 i);
      form_max_boxes = default_max_boxes;
      form_max_indent = default_max_indent;
      form_ellipsis = default_ellipsis;
