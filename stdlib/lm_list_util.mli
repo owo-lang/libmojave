@@ -179,15 +179,6 @@ val compare_eq : 'a list -> 'a list -> bool
 (* Elements must be equal, but lists may be different lengths *)
 val compare_cmp : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool
 
-(*
- * These functions are just like the List functions
- * but they raise Failure, not Invalid_argument.
- *)
-val nth : 'a list -> int -> 'a
-val map2 : ('a -> 'b -> 'c) -> 'a list -> 'b list -> 'c list
-val fold_left2 : ('a -> 'b -> 'c -> 'a) -> 'a -> 'b list -> 'c list -> 'a
-val iter2 : ('a -> 'b -> unit) -> 'a list -> 'b list -> unit
-
 (* Returns false if the list lengths mismatch *)
 val for_all2 : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool
 

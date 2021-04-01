@@ -701,39 +701,6 @@ let rec compare_eq l1 l2 =
     | _ ->
          false
 
-(*
- * Get the nth item.
- *)
-let rec nth l i =
-   if i <= 0 then
-      raise (Failure "Lm_list_util.nth")
-   else
-      match l with
-         _::t ->
-            nth t (i - 1)
-       | [] ->
-            raise (Failure "Lm_list_util.nth")
-
-(*
- * Map a function over two lists.
- *)
-let rec map2 f l1 l2 = match (l1,l2) with
-   h1::t1, h2::t2 ->
-      let h = f h1 h2 in
-         h :: map2 f t1 t2
- | [], [] -> []
- | _ -> raise (Failure "Lm_list_util.map2")
-
-let rec iter2 f al bl =
-   match (al, bl) with
-      h1::t1, h2::t2 ->
-         f h1 h2;
-         iter2 f t1 t2
-    | [], [] ->
-         ()
-    | _ ->
-         raise (Failure "Lm_list_util.iter2")
-
 let rec rev_iter2 f a b =
    match (a,b) with
       ([], []) -> ()
@@ -756,18 +723,6 @@ let rec exists2 f l1 l2 = match (l1,l2) with
    h1::t1, h2::t2 ->
       f h1 h2 || exists2 f t1 t2
  | _ -> false
-
-(*
- * Fold left over two lists.
- *)
-let rec fold_left2 f x al bl =
-   match (al, bl) with
-      (h1::t1, h2::t2) ->
-         fold_left2 f (f x h1 h2) t1 t2
-    | [], [] ->
-         x
-    | _ ->
-         raise (Failure "Lm_list_util.fold_left2")
 
 let rec smap f = function
    [] -> []

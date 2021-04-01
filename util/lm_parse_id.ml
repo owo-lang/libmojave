@@ -24,7 +24,7 @@
 
 
 let parse_id id =
-   let parts = String.split_at_char ' ' id in
+   let parts = String.split_on_char ' ' id in
       match parts with
          [_; name; rev; date; time; user; ty; _] ->
             name, rev, date, time, user, ty
