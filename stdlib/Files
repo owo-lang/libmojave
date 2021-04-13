@@ -45,6 +45,7 @@ STDLIB_FILES[] =
     lm_thread_event
     lm_thread_shell
     lm_array_linear_set
+    lm_larray_linear_set
     # lm_rope_linear_set
     lm_index
     lm_fqueue
