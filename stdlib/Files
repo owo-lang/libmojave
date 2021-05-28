@@ -47,6 +47,7 @@ STDLIB_FILES[] =
     lm_array_linear_set
     lm_larray_linear_set
     # lm_rope_linear_set
+    lm_link_list
     lm_index
     lm_fqueue
     lm_serial_map
