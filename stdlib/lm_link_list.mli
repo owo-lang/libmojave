@@ -33,9 +33,11 @@ type 'a llist
 val empty : 'a llist
 val insert : 'a -> 'a llist -> 'a llist
 val delete : 'a llist -> 'a llist * 'a
-val pred : 'a llist -> 'a llist
+val top : 'a llist -> 'a
+val prev : 'a llist -> 'a llist
 val next : 'a llist -> 'a llist
 val copy : 'a llist -> 'a llist
+val is_single : 'a llist -> bool
 
 (*
  * -*-
