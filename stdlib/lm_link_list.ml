@@ -35,14 +35,28 @@ type 'a llist =
    }
  | Nil
 
-
 let empty = Nil
+
+(*
+type 'a t =
+   { mutable head : 'a llist;
+     mutable node : 'a llist }
+
+let create () =
+   let nil = Nil in
+      { head = nil; node = nil }
+*)
 
 let insert a = function
    (Node n) as p ->
-       let node = Node { elt = a; prev = p; next = n.next } in
-          n.next <- node;
-          node
+      let node = Node { elt = a; prev = p; next = n.next } in
+         begin
+            match n.next with
+               Node n'-> n'.prev <- node
+             | _ -> raise (Failure "impossible")
+         end;
+         n.next <- node;
+         node
  | Nil ->
       let node = Node { elt = a; prev = Nil; next = Nil } in
       (* make it circular *)
