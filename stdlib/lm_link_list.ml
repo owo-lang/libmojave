@@ -93,34 +93,44 @@ let next = function
    Node { next = (Node _) as n; _ } -> n
  | _ -> invalid_arg "list is not circular"
 
-let copy a =
-   match a with
-      Nil -> Nil
-    | Node n -> let init = Node { elt = n.elt; prev = Nil; next = Nil } in
-                let rec aux prev node =
-                   match prev, node with
-                      Node prev', Node node' ->
-                         if node == a then
-                         begin
-                            prev'.next <- init;
-                            match init with
-                               Node init' ->
-                                  init'.prev <- prev
-                             | _ -> raise (Failure "impossible")
-                         end
-                         else
-                         begin
-                            match node with
-                               Node n ->
-                                  let new_node = Node { n with prev = prev;
-                                                               next = Nil }
-                                  in prev'.next <- new_node;
-                                     aux new_node (node'.next)
-                             | Nil -> invalid_arg "list is not circular"
-                         end
-                    | _ -> raise (Failure "impossible")
-                in aux init n.next;
-                   init
+let copy = function
+   (Node n) as a ->
+      let init = Node { elt = n.elt; prev = Nil; next = Nil } in
+      let rec aux prev node =
+         match prev, node with
+            Node prev', Node node' ->
+               if node == a then
+               begin
+                  prev'.next <- init;
+                  match init with
+                     Node init' ->
+                        init'.prev <- prev
+                   | _ -> raise (Failure "impossible")
+               end
+               else
+               begin
+                  match node with
+                     Node n ->
+                        let new_node = Node { n with prev = prev;
+                                                     next = Nil }
+                        in prev'.next <- new_node;
+                           aux new_node (node'.next)
+                   | Nil -> invalid_arg "list is not circular"
+               end
+          | _ -> raise (Failure "impossible")
+      in aux init n.next;
+         init
+ | Nil -> Nil
+
+let to_list = function
+   (Node { elt = e; _ }) as a ->
+      let rec aux acc cur =
+         if cur == a then
+            acc
+         else
+            aux (top cur :: acc) (prev cur)
+      in aux [e] (prev a)
+ | Nil -> []
 
 
 (*

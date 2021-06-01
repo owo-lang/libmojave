@@ -1,5 +1,5 @@
 (*
- * Sequence with optimized insert & delete.
+ * Comparing tags.
  *
  * ----------------------------------------------------------------
  *
@@ -28,17 +28,10 @@
  * ldbeth@sdf.org
  *)
 
-type 'a llist
+val tag : 'a -> int
+val compare : 'a -> 'a -> int
 
-val empty : 'a llist
-val insert : 'a -> 'a llist -> 'a llist
-val delete : 'a llist -> 'a llist * 'a
-val top : 'a llist -> 'a
-val prev : 'a llist -> 'a llist
-val next : 'a llist -> 'a llist
-val copy : 'a llist -> 'a llist
-val is_single : 'a llist -> bool
-val to_list : 'a llist -> 'a list
+val lab : 'a -> int
 
 (*
  * -*-
