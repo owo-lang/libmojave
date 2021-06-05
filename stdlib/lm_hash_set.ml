@@ -161,8 +161,8 @@ struct
    (*
     * Remove an element.
     *)
-   let remove { table = table } x =
-      { table = Remove (table, x) }
+   let remove t x =
+      { table = Remove (t.table, x) }
 
    (*
     * Set operations.

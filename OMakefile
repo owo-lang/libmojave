@@ -63,8 +63,8 @@ if $(not $(defined LM_STANDALONE))
     export
 
 if $(not $(defined CAMLLIB))
-    CAMLLIB = $(dir $(getenv CAMLLIB, $(getenv OCAMLLIB, $(shell $(OCAMLC) -where))))
-    INCLUDES += $(CAMLLIB)
+    CAMLLIB = $(dir $(getenv OPAM_SWITCH_PREFIX)/lib)
+    INCLUDES += $(CAMLLIB)/ocaml
     export
 
 LIBFILES =

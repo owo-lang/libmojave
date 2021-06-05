@@ -191,14 +191,14 @@ struct
    (*
     * Projections.
     *)
-   let node_value { entries = entries; _ } i =
-      entries.(i).entry_value
+   let node_value node i =
+      node.entries.(i).entry_value
 
-   let node_out_edges { entries = entries; _ } i =
-      entries.(i).entry_out_edges
+   let node_out_edges node i =
+      node.entries.(i).entry_out_edges
 
-   let node_in_edges { entries = entries; _ } i =
-      entries.(i).entry_in_edges
+   let node_in_edges node i =
+      node.entries.(i).entry_in_edges
 
    (*
     * Sweep a function up the DAG, calling on the children first.
@@ -241,17 +241,17 @@ struct
 
    let some_edges_f { entry_in_edges = _; _ } = []
 
-   let sweep_up { entries = entries; _ } f =
-      sweep_aux entries f out_edges_f in_edges_f
+   let sweep_up node f =
+      sweep_aux node.entries f out_edges_f in_edges_f
 
-   let sweep_down { entries = entries; _ } f =
-      sweep_aux entries f in_edges_f out_edges_f
+   let sweep_down node f =
+      sweep_aux node.entries f in_edges_f out_edges_f
 
-   let sweep_up_all { entries = entries; _ } f =
-      sweep_aux entries f out_edges_f some_edges_f
+   let sweep_up_all node f =
+      sweep_aux node.entries f out_edges_f some_edges_f
 
-   let sweep_down_all { entries = entries; _ } f =
-      sweep_aux entries f in_edges_f some_edges_f
+   let sweep_down_all node f =
+      sweep_aux node.entries f in_edges_f some_edges_f
 
    (*
     * Get the roots of the DAG.
