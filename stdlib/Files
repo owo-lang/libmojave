@@ -18,7 +18,6 @@ STDLIB_FILES[] =
     lm_file_util
     lm_int_util
     lm_hashtbl_util
-    lm_ref_util
     lm_array_sig
     lm_large_array
     lm_large_array_weak
